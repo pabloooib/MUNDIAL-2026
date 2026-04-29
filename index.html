@@ -174,7 +174,7 @@
                 el.classList.add('active');
             },
 
-            // --- PRECIOS (Sincronizado con config/precios) ---
+            // --- PRECIOS ---
             initPrices() {
                 onSnapshot(doc(db, "config", "precios"), (snap) => {
                     if(snap.exists()) {
@@ -194,8 +194,8 @@
                 document.querySelectorAll('#price-inputs input').forEach(inp => {
                     newPrices[inp.dataset.key] = parseFloat(inp.value);
                 });
-                await setDoc(doc(db, "config", "precios"), newPrices);
-                alert("¡ÉXITO! Los clientes verán los nuevos precios ahora.");
+                await setDoc(doc(doc(db, "config", "precios")), newPrices);
+                alert("¡ÉXITO! Precios actualizados.");
             },
 
             // --- CARTAS ESPECIALES ---
@@ -210,12 +210,10 @@
                     document.getElementById('c_name').value = '';
                     document.getElementById('c_price').value = '';
                     document.getElementById('c_stock').value = '';
-                } else {
-                    alert("Por favor completa todos los campos.");
                 }
             },
 
-            // --- PEDIDOS (Gestión de Estatus) ---
+            // --- PEDIDOS ---
             initOrders() {
                 onSnapshot(collection(db, "pedidos"), (snap) => {
                     document.getElementById('list-pedidos').innerHTML = snap.docs.map(d => {
@@ -238,13 +236,13 @@
                             </div>
                             <div style="display:flex; gap:10px;">
                                 <select onchange="app.updateStatus('${d.id}', this.value)" style="margin-top:0; flex:2;">
-                                    <option value="pendiente" ${p.status==='pendiente'?'selected':''}>Marcar como Pendiente</option>
-                                    <option value="entregado" ${p.status==='entregado'?'selected':''}>Marcar como Entregado</option>
+                                    <option value="pendiente" ${p.status==='pendiente'?'selected':''}>Pendiente</option>
+                                    <option value="entregado" ${p.status==='entregado'?'selected':''}>Entregado</option>
                                 </select>
-                                <button onclick="app.deleteDoc('pedidos','${d.id}')" style="background:none; border:1px solid var(--danger); color:var(--danger); border-radius:6px; padding:0 15px; cursor:pointer; font-size:0.6rem;">BORRAR</button>
+                                <button onclick="app.deleteDoc('pedidos','${d.id}')" style="background:none; border:1px solid var(--danger); color:var(--danger); border-radius:6px; padding:0 15px; cursor:pointer;">BORRAR</button>
                             </div>
                         </div>`;
-                    }).reverse().join(''); // Pedidos más recientes arriba
+                    }).reverse().join('');
                 });
             },
 
@@ -253,41 +251,43 @@
             },
 
             async deleteDoc(col, id) { 
-                if(confirm("¿Estás seguro de eliminar este registro? Esta acción es irreversible.")) {
+                if(confirm("¿Eliminar registro?")) {
                     await deleteDoc(doc(db, col, id));
                 }
             },
 
+            // --- RESEÑAS ---
             initFeedback() {
                 onSnapshot(collection(db, "mejoras"), (snap) => {
                     document.getElementById('list-feedback').innerHTML = snap.docs.map(d => `
                         <div class="card">
                             <div class="star-display">${'★'.repeat(d.data().rating)}${'☆'.repeat(5-d.data().rating)}</div>
                             <p style="font-style: italic; color: #ccc;">"${d.data().comment || 'Sin comentario'}"</p>
-                            <div style="margin-top:10px; font-size:0.7rem; opacity:0.5; border-top:1px solid #222; padding-top:10px;">
-                                Cliente: <strong>${d.data().user}</strong> • ${d.data().date}
+                            <div style="margin-top:10px; font-size:0.7rem; opacity:0.5;">
+                                Cliente: ${d.data().user} • ${d.data().date}
                             </div>
-                            <button onclick="app.deleteDoc('mejoras','${d.id}')" style="background:none; border:none; color:var(--danger); font-size:0.6rem; cursor:pointer; margin-top:10px; opacity:0.5;">Eliminar Reseña</button>
+                            <button onclick="app.deleteDoc('mejoras','${d.id}')" style="background:none; border:none; color:var(--danger); font-size:0.6rem; cursor:pointer; margin-top:10px;">Eliminar</button>
                         </div>
                     `).join('');
                 });
             },
 
             init() {
+                // LLAMADA A LAS FUNCIONES DE INICIALIZACIÓN
                 this.initPrices();
-                this.initFeedback();
                 this.initOrders();
+                this.initFeedback();
                 
-                // Monitor de Cartas Especiales (Stock)
+                // Monitor de Cartas Especiales
                 onSnapshot(collection(db, "especiales"), (snap) => {
                     document.getElementById('list-especiales').innerHTML = snap.docs.map(d => `
-                        <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 25px;">
+                        <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
                             <div>
-                                <strong style="color:var(--gold); font-size:1rem;">${d.data().name}</strong> 
-                                <span style="font-size:0.6rem; opacity:0.5; margin-left:10px;">${d.data().rarity.toUpperCase()}</span><br>
-                                <small style="opacity:0.8;">Q${d.data().price} — Unidades: ${d.data().stock}</small>
+                                <strong style="color:var(--gold);">${d.data().name}</strong> 
+                                <small>${d.data().rarity}</small><br>
+                                <small>Q${d.data().price} | Stock: ${d.data().stock}</small>
                             </div>
-                            <button onclick="app.deleteDoc('especiales','${d.id}')" style="color:var(--danger); background:none; border:none; cursor:pointer; font-size:0.7rem; letter-spacing:1px;">QUITAR</button>
+                            <button onclick="app.deleteDoc('especiales','${d.id}')" style="color:var(--danger); background:none; border:none; cursor:pointer;">QUITAR</button>
                         </div>
                     `).join('');
                 });

@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asesor Panini 2026 - Control</title>
+    <title>Asesor Panini 2026 - Control Maestro</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✦</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&family=Cormorant+Garamond:wght@300&display=swap" rel="stylesheet">
     <style>
         :root { 
             --primary: #ffffff; --border: #333333; --bg: #0a0a0a; 
             --sidebar: #111111; --text: #f1f1f1; --accent: #8d7b6d;
-            --gold: #ffd700;
+            --gold: #ffd700; --danger: #ff5252;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.2s; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden; }
 
         /* LOGIN SCREEN */
         #login-screen {
@@ -38,10 +38,11 @@
         .nav-item { 
             padding: 15px; cursor: pointer; font-size: 0.7rem; letter-spacing: 2px; 
             text-transform: uppercase; color: var(--text); opacity: 0.5; border-left: 2px solid transparent;
+            margin-bottom: 5px;
         }
         .nav-item.active { opacity: 1; font-weight: bold; border-left: 2px solid var(--accent); background: rgba(255,255,255,0.02); }
 
-        /* CARDS & UI */
+        /* UI ELEMENTS */
         .card { background: #151515; padding: 25px; border: 1px solid var(--border); margin-bottom: 20px; border-radius: 12px; }
         .btn { 
             padding: 12px 20px; background: var(--accent); color: white; border: none; 
@@ -55,57 +56,58 @@
             background: #1a1a1a; color: white; font-family: inherit; border-radius: 6px;
         }
         
-        .section { display: none; animation: fadeIn 0.3s ease; }
+        .section { display: none; animation: fadeIn 0.4s ease; }
         .section.active { display: block; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .star-display { color: var(--gold); font-size: 1.2rem; margin-bottom: 5px; }
-        .badge { font-size: 0.6rem; background: var(--accent); padding: 3px 8px; border-radius: 10px; margin-left: 10px; }
+        .badge { font-size: 0.6rem; background: var(--accent); padding: 3px 8px; border-radius: 10px; margin-left: 10px; color: white; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
         <div class="login-card">
-            <h2 style="font-family: 'Cormorant Garamond'; color: var(--accent); margin-bottom: 20px; letter-spacing: 2px;">ACCESO ASESOR</h2>
-            <input type="password" id="admin-pin" placeholder="PASSWORD" style="text-align: center; font-size: 1.2rem; letter-spacing: 5px;">
-            <button class="btn" style="margin-top: 20px;" onclick="checkPin()">INGRESAR</button>
+            <h2 style="font-family: 'Cormorant Garamond'; color: var(--accent); margin-bottom: 20px; letter-spacing: 2px;">PANEL ASESOR</h2>
+            <p style="font-size: 0.7rem; opacity: 0.5; margin-bottom: 20px;">INGRESE PIN DE SEGURIDAD</p>
+            <input type="password" id="admin-pin" placeholder="••••••" style="text-align: center; font-size: 1.5rem; letter-spacing: 8px;">
+            <button class="btn" style="margin-top: 25px;" onclick="checkPin()">AUTENTICAR</button>
         </div>
     </div>
 
     <aside id="admin-sidebar" style="display: none;">
         <div style="margin-bottom: 40px; text-align: center; padding-top: 20px;">
-            <h2 style="font-family: 'Cormorant Garamond'; letter-spacing: 4px; color: var(--accent);">ASESOR PANEL</h2>
+            <h2 style="font-family: 'Cormorant Garamond'; letter-spacing: 4px; color: var(--accent);">MOWI ADVISOR</h2>
         </div>
-        <div class="nav-item active" onclick="app.setTab('precios', this)">💰 Editar Precios</div>
-        <div class="nav-item" onclick="app.setTab('especiales', this)">⭐ Cartas en Stock</div>
-        <div class="nav-item" onclick="app.setTab('pedidos', this)">📦 Pedidos Activos</div>
-        <div class="nav-item" onclick="app.setTab('mejoras', this)">📈 Calificaciones</div>
+        <div class="nav-item active" onclick="app.setTab('precios', this)">💰 LISTA DE PRECIOS</div>
+        <div class="nav-item" onclick="app.setTab('especiales', this)">⭐ CARTAS EN STOCK</div>
+        <div class="nav-item" onclick="app.setTab('pedidos', this)">📦 PEDIDOS CLIENTE</div>
+        <div class="nav-item" onclick="app.setTab('mejoras', this)">📈 RESEÑAS</div>
         
         <div style="margin-top: auto; padding-bottom: 20px;">
-            <div class="nav-item" onclick="location.reload()" style="color:#ff5252; opacity: 1;">CERRAR SESIÓN</div>
+            <div class="nav-item" onclick="location.reload()" style="color: var(--danger); opacity: 1;">LOGOUT</div>
         </div>
     </aside>
 
     <main id="admin-main">
         <section id="tab-precios" class="section active">
-            <h2 style="font-family: 'Cormorant Garamond'; font-size: 2rem; margin-bottom: 20px;">Sincronización de Precios</h2>
+            <h2 style="font-family: 'Cormorant Garamond'; font-size: 2.2rem; margin-bottom: 10px;">Gestión de Precios</h2>
+            <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 30px;">Cambia los valores para actualizar la tienda del cliente.</p>
             <div class="card">
-                <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 20px;">Los cambios aquí se reflejarán instantáneamente en la "Lista de Precios" del usuario.</p>
                 <div id="price-inputs">
-                    <p>Cargando lista de precios...</p>
+                    <p style="text-align: center; opacity: 0.5;">Sincronizando con Firebase...</p>
                 </div>
-                <button class="btn" style="margin-top: 20px;" onclick="app.savePrices()">Actualizar Precios en App</button>
+                <button class="btn" style="margin-top: 20px;" onclick="app.savePrices()">Sincronizar Cambios</button>
             </div>
         </section>
 
         <section id="tab-especiales" class="section">
-            <h2 style="font-family: 'Cormorant Garamond'; font-size: 2rem; margin-bottom: 20px;">Inventario de Cartas (Stock)</h2>
+            <h2 style="font-family: 'Cormorant Garamond'; font-size: 2.2rem; margin-bottom: 10px;">Inventario Especial</h2>
             <div class="card">
-                <h4>Agregar Nueva Carta al Inventario</h4>
+                <h4 style="font-size: 0.7rem; letter-spacing: 1px; color: var(--accent);">NUEVA CARTA</h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <input type="text" id="c_name" placeholder="Nombre del Jugador">
+                    <input type="text" id="c_name" placeholder="Nombre Jugador">
                     <select id="c_rarity">
                         <option value="Oro">Oro</option>
                         <option value="Plata">Plata</option>
@@ -116,20 +118,20 @@
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <input type="number" id="c_price" placeholder="Precio (Q)">
-                    <input type="number" id="c_stock" placeholder="Cantidad en Stock">
+                    <input type="number" id="c_stock" placeholder="Stock Inicial">
                 </div>
-                <button class="btn" style="margin-top: 15px;" onclick="app.addSpecial()">Publicar en Stock de Usuario</button>
+                <button class="btn" style="margin-top: 15px;" onclick="app.addSpecial()">Publicar en Tienda</button>
             </div>
             <div id="list-especiales"></div>
         </section>
 
         <section id="tab-pedidos" class="section">
-            <h2 style="font-family: 'Cormorant Garamond'; font-size: 2rem; margin-bottom: 20px;">Gestión de Pedidos</h2>
+            <h2 style="font-family: 'Cormorant Garamond'; font-size: 2.2rem; margin-bottom: 10px;">Pedidos Activos</h2>
             <div id="list-pedidos"></div>
         </section>
 
         <section id="tab-mejoras" class="section">
-            <h2 style="font-family: 'Cormorant Garamond'; font-size: 2rem; margin-bottom: 20px;">Calificaciones y Estrellas</h2>
+            <h2 style="font-family: 'Cormorant Garamond'; font-size: 2.2rem; margin-bottom: 10px;">Feedback del Cliente</h2>
             <div id="list-feedback"></div>
         </section>
     </main>
@@ -150,7 +152,7 @@
         const fApp = initializeApp(firebaseConfig);
         const db = getFirestore(fApp);
 
-        // Lógica de Login
+        // Autenticación
         window.checkPin = function() {
             const pin = document.getElementById('admin-pin').value;
             if(pin === "123456") {
@@ -159,7 +161,7 @@
                 document.getElementById('admin-main').style.display = 'block';
                 app.init();
             } else {
-                alert("PIN INCORRECTO");
+                alert("PIN DE ASESOR INVÁLIDO");
                 document.getElementById('admin-pin').value = "";
             }
         };
@@ -172,24 +174,17 @@
                 el.classList.add('active');
             },
 
-            // --- PRECIOS ---
+            // --- PRECIOS (Sincronizado con config/precios) ---
             initPrices() {
                 onSnapshot(doc(db, "config", "precios"), (snap) => {
                     if(snap.exists()) {
                         const data = snap.data();
                         document.getElementById('price-inputs').innerHTML = Object.entries(data).map(([item, price]) => `
                             <div style="margin-bottom:15px;">
-                                <label style="font-size:0.7rem; color:var(--accent)">${item.toUpperCase()}</label>
+                                <label style="font-size:0.65rem; color:var(--accent); letter-spacing:1px;">${item.toUpperCase()}</label>
                                 <input type="number" data-key="${item}" value="${price}">
                             </div>
                         `).join('');
-                    } else {
-                        setDoc(doc(db, "config", "precios"), {
-                            "Sobre de Estampas": 7,
-                            "Album Pasta Dura": 125,
-                            "Album Normal": 35,
-                            "Caja 100 Sobres": 980
-                        });
                     }
                 });
             },
@@ -200,80 +195,99 @@
                     newPrices[inp.dataset.key] = parseFloat(inp.value);
                 });
                 await setDoc(doc(db, "config", "precios"), newPrices);
-                alert("Sincronización exitosa: Precios actualizados.");
+                alert("¡ÉXITO! Los clientes verán los nuevos precios ahora.");
             },
 
-            // --- STOCK CARTAS ESPECIALES ---
+            // --- CARTAS ESPECIALES ---
             async addSpecial() {
                 const name = document.getElementById('c_name').value;
                 const rarity = document.getElementById('c_rarity').value;
                 const price = parseFloat(document.getElementById('c_price').value);
                 const stock = parseInt(document.getElementById('c_stock').value);
 
-                if(name && price) {
+                if(name && price && !isNaN(stock)) {
                     await addDoc(collection(db, "especiales"), { name, rarity, price, stock });
                     document.getElementById('c_name').value = '';
                     document.getElementById('c_price').value = '';
                     document.getElementById('c_stock').value = '';
-                    alert("Carta agregada al stock.");
+                } else {
+                    alert("Por favor completa todos los campos.");
                 }
             },
 
-            // --- CALIFICACIONES ---
+            // --- PEDIDOS (Gestión de Estatus) ---
+            initOrders() {
+                onSnapshot(collection(db, "pedidos"), (snap) => {
+                    document.getElementById('list-pedidos').innerHTML = snap.docs.map(d => {
+                        const p = d.data();
+                        const statusColor = p.status === 'pendiente' ? '#ff9800' : '#4caf50';
+                        return `
+                        <div class="card" style="border-left: 4px solid ${statusColor}">
+                            <div style="display:flex; justify-content:space-between; align-items:start;">
+                                <div>
+                                    <strong style="font-size:1.1rem;">${p.name}</strong><br>
+                                    <span style="font-size:0.7rem; opacity:0.6;">Rastreo: ${p.trackingID}</span>
+                                </div>
+                                <span class="badge" style="background:${statusColor}">${p.status.toUpperCase()}</span>
+                            </div>
+                            <div style="margin:15px 0; padding:10px; background:rgba(0,0,0,0.2); border-radius:6px; font-size:0.85rem;">
+                                ${p.details}
+                            </div>
+                            <div style="font-size:0.75rem; margin-bottom:15px;">
+                                📧 ${p.email} | 📍 ${p.location || 'Guatemala'}
+                            </div>
+                            <div style="display:flex; gap:10px;">
+                                <select onchange="app.updateStatus('${d.id}', this.value)" style="margin-top:0; flex:2;">
+                                    <option value="pendiente" ${p.status==='pendiente'?'selected':''}>Marcar como Pendiente</option>
+                                    <option value="entregado" ${p.status==='entregado'?'selected':''}>Marcar como Entregado</option>
+                                </select>
+                                <button onclick="app.deleteDoc('pedidos','${d.id}')" style="background:none; border:1px solid var(--danger); color:var(--danger); border-radius:6px; padding:0 15px; cursor:pointer; font-size:0.6rem;">BORRAR</button>
+                            </div>
+                        </div>`;
+                    }).reverse().join(''); // Pedidos más recientes arriba
+                });
+            },
+
+            async updateStatus(id, s) { 
+                await updateDoc(doc(db, "pedidos", id), { status: s }); 
+            },
+
+            async deleteDoc(col, id) { 
+                if(confirm("¿Estás seguro de eliminar este registro? Esta acción es irreversible.")) {
+                    await deleteDoc(doc(db, col, id));
+                }
+            },
+
             initFeedback() {
                 onSnapshot(collection(db, "mejoras"), (snap) => {
                     document.getElementById('list-feedback').innerHTML = snap.docs.map(d => `
                         <div class="card">
                             <div class="star-display">${'★'.repeat(d.data().rating)}${'☆'.repeat(5-d.data().rating)}</div>
-                            <p style="font-style: italic;">"${d.data().comment || 'Sin comentario'}"</p>
-                            <div style="margin-top:10px; font-size:0.7rem; opacity:0.5;">
-                                Usuario: <strong>${d.data().user}</strong> • ${d.data().date}
+                            <p style="font-style: italic; color: #ccc;">"${d.data().comment || 'Sin comentario'}"</p>
+                            <div style="margin-top:10px; font-size:0.7rem; opacity:0.5; border-top:1px solid #222; padding-top:10px;">
+                                Cliente: <strong>${d.data().user}</strong> • ${d.data().date}
                             </div>
+                            <button onclick="app.deleteDoc('mejoras','${d.id}')" style="background:none; border:none; color:var(--danger); font-size:0.6rem; cursor:pointer; margin-top:10px; opacity:0.5;">Eliminar Reseña</button>
                         </div>
                     `).join('');
                 });
             },
-
-            // --- PEDIDOS ---
-            initOrders() {
-                onSnapshot(collection(db, "pedidos"), (snap) => {
-                    document.getElementById('list-pedidos').innerHTML = snap.docs.map(d => {
-                        const p = d.data();
-                        return `
-                        <div class="card" style="border-left: 4px solid ${p.status === 'pendiente' ? '#ff9800' : '#4caf50'}">
-                            <div style="display:flex; justify-content:space-between;">
-                                <strong>${p.name}</strong>
-                                <span class="badge">${p.trackingID}</span>
-                            </div>
-                            <p style="font-size:0.8rem; margin:10px 0;">${p.details || 'Pedido estándar'}</p>
-                            <div style="font-size:0.7rem; margin-bottom:10px; opacity:0.7;">Email: ${p.email}</div>
-                            <select onchange="app.updateStatus('${d.id}', this.value)">
-                                <option value="pendiente" ${p.status==='pendiente'?'selected':''}>Pendiente</option>
-                                <option value="entregado" ${p.status==='entregado'?'selected':''}>Entregado</option>
-                            </select>
-                            <button onclick="app.deleteDoc('pedidos','${d.id}')" style="background:none; border:none; color:#ff5252; font-size:0.6rem; cursor:pointer; margin-top:15px; text-decoration: underline;">ELIMINAR PEDIDO</button>
-                        </div>`;
-                    }).join('');
-                });
-            },
-
-            async updateStatus(id, s) { await updateDoc(doc(db, "pedidos", id), { status: s }); },
-            async deleteDoc(col, id) { if(confirm("¿Eliminar definitivamente?")) await deleteDoc(doc(db, col, id)); },
 
             init() {
                 this.initPrices();
                 this.initFeedback();
                 this.initOrders();
                 
-                // Cargar cartas especiales en tiempo real
+                // Monitor de Cartas Especiales (Stock)
                 onSnapshot(collection(db, "especiales"), (snap) => {
                     document.getElementById('list-especiales').innerHTML = snap.docs.map(d => `
-                        <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 25px;">
                             <div>
-                                <strong style="color:var(--gold)">${d.data().name}</strong> <small>(${d.data().rarity})</small><br>
-                                <small>Q${d.data().price} • Stock: ${d.data().stock}</small>
+                                <strong style="color:var(--gold); font-size:1rem;">${d.data().name}</strong> 
+                                <span style="font-size:0.6rem; opacity:0.5; margin-left:10px;">${d.data().rarity.toUpperCase()}</span><br>
+                                <small style="opacity:0.8;">Q${d.data().price} — Unidades: ${d.data().stock}</small>
                             </div>
-                            <button onclick="app.deleteDoc('especiales','${d.id}')" style="color:#ff5252; background:none; border:none; cursor:pointer; font-weight:bold;">ELIMINAR</button>
+                            <button onclick="app.deleteDoc('especiales','${d.id}')" style="color:var(--danger); background:none; border:none; cursor:pointer; font-size:0.7rem; letter-spacing:1px;">QUITAR</button>
                         </div>
                     `).join('');
                 });

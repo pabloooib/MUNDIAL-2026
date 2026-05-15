@@ -58,9 +58,11 @@
         .btn-danger:hover { background: var(--danger); color: white; box-shadow: none; }
 
         /* Grids */
-        .admin-sticker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; margin-top: 25px; }
-        .admin-stk-item { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 16px; text-align: center; }
-        .admin-stk-item b { font-family: 'Oswald'; font-size: 1.2rem; display: block; margin-bottom: 5px; }
+        .admin-sticker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-top: 25px; }
+        .admin-stk-item { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 16px; text-align: left; display: flex; flex-direction: column; justify-content: space-between; }
+        .admin-stk-item b { font-family: 'Oswald'; font-size: 1.2rem; display: block; margin-bottom: 5px; text-align: center; }
+        .admin-stk-item label { font-size: 0.65rem; opacity: 0.5; margin-top: 8px; text-transform: uppercase; display: block; }
+        .admin-stk-item select, .admin-stk-item input { padding: 8px; font-size: 0.85rem; margin-top: 4px; }
         
         /* Grid de Royal Legends */
         .royal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
@@ -104,7 +106,7 @@
         <!-- VISTA 1: VALORES DEL ÁLBUM POR PAÍS -->
         <div id="inventario-view" class="view active">
             <h2 style="font-family:'Oswald'; font-size:2.2rem; margin-bottom:5px;">VALORES DEL ÁLBUM</h2>
-            <p style="opacity:0.5; font-size:0.85rem; margin-bottom:25px;">Modifica de forma personalizada los precios de las 20 estampas de cada país.</p>
+            <p style="opacity:0.5; font-size:0.85rem; margin-bottom:25px;">Modifica de forma personalizada los precios y disponibilidad de las 20 estampas de cada país.</p>
             <div class="card">
                 <div style="max-width: 400px;">
                     <select id="admin-country-selector" onchange="adminApp.loadCountryStickers()"></select>
@@ -120,7 +122,6 @@
             <p style="opacity:0.5; font-size:0.85rem; margin-bottom:25px;">Modifica precios y cambia el estado de stock al instante para las cartas estáticas del usuario.</p>
             
             <div class="royal-grid" id="royal-cards-container">
-                <!-- Se inyecta dinámicamente desde Firestore -->
                 Cargando altar de leyendas...
             </div>
             <button class="btn" style="margin-top:35px; max-width:320px;" onclick="adminApp.saveRoyalLegends()"><i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Vitrina Royal</button>
@@ -189,7 +190,7 @@
         };
 
         window.adminApp = {
-            // CONTROL DE PRECIOS POR PAÍSES
+            // CONTROL DE PRECIOS Y DISPONIBILIDAD POR PAÍSES
             async loadCountryStickers() {
                 const pais = document.getElementById('admin-country-selector').value;
                 const gridContainer = document.getElementById('admin-grid-container');
@@ -201,12 +202,31 @@
                     for(let i = 1; i <= 20; i++) {
                         let precioDefecto = (i === 1) ? 10 : (i === 13 ? 15 : 2);
                         if(pais === "Portugal" && i === 15) precioDefecto = 40;
-                        let precioFinal = preciosGuardados.hasOwnProperty(i) ? preciosGuardados[i] : precioDefecto;
+                        
+                        // Validar si los datos guardados son un objeto estructurado {precio, disponible} o solo el número directo histórico
+                        let precioFinal = precioDefecto;
+                        let disponibleFinal = true;
+
+                        if (preciosGuardados.hasOwnProperty(i)) {
+                            if (typeof preciosGuardados[i] === 'object' && preciosGuardados[i] !== null) {
+                                precioFinal = preciosGuardados[i].precio ?? precioDefecto;
+                                disponibleFinal = preciosGuardados[i].disponible ?? true;
+                            } else {
+                                precioFinal = preciosGuardados[i]; // Soporte retroactivo si solo guardabas el número
+                            }
+                        }
 
                         htmlCards += `
-                            <div class="admin-stk-item">
+                            <div class="admin-stk-item" data-num="${i}">
                                 <b>#${i}</b>
-                                <input type="number" class="stk-price-input" data-num="${i}" value="${precioFinal}">
+                                <label>Precio (Q)</label>
+                                <input type="number" class="stk-price-input" value="${precioFinal}">
+                                
+                                <label>Estado</label>
+                                <select class="stk-status-select">
+                                    <option value="true" ${disponibleFinal ? 'selected' : ''}>DISPONIBLE</option>
+                                    <option value="false" ${!disponibleFinal ? 'selected' : ''}>AGOTADO</option>
+                                </select>
                             </div>
                         `;
                     }
@@ -216,13 +236,22 @@
 
             async saveCountryPrices() {
                 const pais = document.getElementById('admin-country-selector').value;
-                const nuevosPrecios = {};
-                document.querySelectorAll('.stk-price-input').forEach(inp => {
-                    nuevosPrecios[inp.dataset.num] = parseFloat(inp.value) || 0;
+                const nuevosDatosPaises = {};
+                
+                document.querySelectorAll('.admin-stk-item').forEach(item => {
+                    const num = item.dataset.num;
+                    const precio = parseFloat(item.querySelector('.stk-price-input').value) || 0;
+                    const disponible = item.querySelector('.stk-status-select').value === "true";
+                    
+                    nuevosDatosPaises[num] = {
+                        precio: precio,
+                        disponible: disponible
+                    };
                 });
+
                 try {
-                    await setDoc(doc(db, "precios_estampas", pais), nuevosPrecios);
-                    alert("¡Precios de estampas actualizados!");
+                    await setDoc(doc(db, "precios_estampas", pais), nuevosDatosPaises);
+                    alert("¡Precios y disponibilidad actualizados de manera exitosa!");
                 } catch (e) { alert(e.message); }
             },
 
@@ -231,7 +260,6 @@
                 onSnapshot(doc(db, "config", "royal_legends"), (snap) => {
                     const container = document.getElementById('royal-cards-container');
                     
-                    // Valores base iniciales mapeados exactamente a tu HTML de cliente
                     const dataDefecto = {
                         "special-messi": { name: "LIONEL MESSI", itemCartName: "MESSI LEYENDA", price: 40, disponible: false },
                         "special-cr7": { name: "C. RONALDO", itemCartName: "CR7 LEYENDA", price: 40, disponible: true },
@@ -284,7 +312,7 @@
                         const isPen = p.status === 'pendiente';
                         return `
                             <div class="card order-card ${isPen ? 'pendiente' : ''}">
-                                <div style="display:flex; justify-content:make-between; align-items:center; margin-bottom:10px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                                     <h4>${p.name || 'Cliente'}</h4>
                                     <span class="badge">${p.status || 'pendiente'}</span>
                                 </div>

@@ -3,453 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOUVREIGN | FIFA 2026</title>
-    <link rel="icon" type="image/jpg" href="panini.jpg">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>SOUVREIGN - Master Control Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Se actualizó a Firebase V10 para total compatibilidad con el módulo de administración -->
-    <script type="importmap">
-        {
-            "imports": {
-                "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
-                "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js",
-                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
-            }
-        }
-    </script>
-
     <style>
         :root { 
-            --wc-purple: #4a148c;
-            --wc-blue: #001b3a;
-            --wc-cyan: #00e5ff;
-            --gold: #ffd700;
-            --glass: rgba(255, 255, 255, 0.1);
+            --primary: #ffffff; --border: #222222; --bg: #05050a; 
+            --sidebar: #0b0b12; --text: #f1f1f1; --accent: #00e5ff;
+            --gold: #ffd700; --danger: #ff5252; --card-bg: #11111e;
         }
-        
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #050510; color: #fff; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
 
-        /* --- INTRO & LOGIN --- */
-        #intro-space { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 5000; display: flex; align-items: center; justify-content: center; transition: 1s; pointer-events: none; }
-        .earth-zoom { width: 150px; height: 150px; background: url('https://upload.wikimedia.org/wikipedia/commons/2/22/Earth_Western_Hemisphere_transparent_background.png'); background-size: cover; animation: superZoom 4s forwards ease-in; }
-        @keyframes superZoom { 0% { transform: scale(0.1); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(45); opacity: 0; } }
+        /* Login Screen */
+        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: var(--card-bg); padding: 40px; border-radius: 20px; border: 1px solid var(--border); text-align: center; width: 340px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        .auth-container { height: 100vh; display: flex; align-items: center; justify-content: center; background: url('FIFA-World-Cup-2026.jpg') center/cover; position: fixed; width: 100%; z-index: 2000; }
-        .auth-card { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(20px); padding: 50px; border-radius: 40px; text-align: center; width: 90%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); }
-        .btn-google-clean { background: #fff; color: #000; border: none; padding: 18px; border-radius: 50px; font-weight: 700; cursor: pointer; width: 100%; font-size: 1.1rem; transition: 0.3s; }
+        /* Sidebar */
+        aside { width: 280px; background: var(--sidebar); border-right: 1px solid var(--border); padding: 30px 20px; display: none; flex-direction: column; position: fixed; height: 100vh; }
+        main { flex: 1; margin-left: 280px; padding: 40px; display: none; background: var(--bg); }
 
-        /* --- NAVIGATION --- */
-        .navbar { position: fixed; top: 0; width: 100%; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 25px; background: rgba(5,5,16,0.9); backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: #0a0a1a; z-index: 1500; transition: 0.4s; padding: 30px 20px; display: flex; flex-direction: column; }
-        .sidebar.active { left: 0; }
-        .nav-item { padding: 15px; color: #fff; text-decoration: none; border-radius: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; font-weight: 500; cursor: pointer; }
-        .nav-item:hover { background: var(--glass); color: var(--wc-cyan); }
+        .nav-item { padding: 15px 20px; cursor: pointer; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text); opacity: 0.5; margin-bottom: 8px; border-radius: 8px; display: flex; align-items: center; gap: 12px; transition: 0.3s; }
+        .nav-item i { font-size: 1rem; width: 20px; }
+        .nav-item:hover { opacity: 0.8; background: rgba(255,255,255,0.02); }
+        .nav-item.active { opacity: 1; font-weight: bold; color: var(--accent); background: rgba(0, 229, 255, 0.05); border-left: 3px solid var(--accent); }
+
+        /* Componentes de diseño */
+        .card { background: var(--card-bg); padding: 25px; border: 1px solid var(--border); margin-bottom: 20px; border-radius: 15px; }
+        .btn { padding: 14px; background: #fff; color: #000; border: none; cursor: pointer; font-size: 0.75rem; font-weight: bold; border-radius: 8px; width: 100%; letter-spacing: 1px; text-transform: uppercase; transition: 0.3s; }
+        .btn:hover { background: var(--accent); color: #000; box-shadow: 0 5px 15px rgba(0,229,255,0.3); }
+        .btn-danger { background: none; border: 1px solid var(--danger); color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: #fff; box-shadow: none; }
         
-        .ig-link { margin-top: auto; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); padding: 15px; border-radius: 15px; text-decoration: none; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; box-shadow: 0 4px 15px rgba(220, 39, 67, 0.4); }
-
-        /* --- VISTAS --- */
-        .view { padding: 90px 20px 100px; max-width: 1000px; margin: auto; display: none; }
-        .view.active { display: block; }
-
-        /* --- STICKERS --- */
-        .stk { aspect-ratio: 0.8; background: var(--glass); border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
-        .stk.selected { background: var(--wc-cyan); color: #000; border-color: #fff; }
-        .stk b { font-family: 'Oswald'; font-size: 1.4rem; }
-
-        /* --- ESPECIALES --- */
-        .special-card { background: linear-gradient(135deg, #1a1a1a, #000); border-radius: 20px; overflow: hidden; border: 1px solid var(--gold); margin-bottom: 20px; display: flex; align-items: center; cursor: pointer; transition: 0.3s; }
-        .special-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2); }
-        .special-card.selected { border: 3px solid var(--wc-cyan); background: rgba(0, 229, 255, 0.1); }
-        .special-card img { width: 120px; height: 160px; object-fit: cover; border-right: 1px solid var(--gold); background: #222; }
-        .special-info { padding: 20px; flex-grow: 1; }
-        .special-info h3 { font-family: 'Oswald'; color: var(--gold); font-size: 1.5rem; margin-bottom: 5px; text-transform: uppercase; }
-
-        /* --- CARRITO --- */
-        .cart-trigger { position: fixed; bottom: 30px; right: 30px; background: var(--wc-cyan); color: #000; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 1001; box-shadow: 0 10px 25px rgba(0,229,255,0.4); }
-        .cart-trigger span { position: absolute; top: 0; right: 0; background: #ff5252; color: #fff; font-size: 0.7rem; padding: 4px 8px; border-radius: 50%; font-weight: bold; }
+        input, select { width: 100%; padding: 12px; margin-top: 8px; border: 1px solid var(--border); background: #161622; color: white; border-radius: 8px; font-family: inherit; }
+        input:focus { border-color: var(--accent); outline: none; }
         
-        .cart-drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100%; background: #fff; color: #000; z-index: 3000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px; display: flex; flex-direction: column; }
-        .cart-drawer.active { right: 0; }
-        .cart-items { flex: 1; overflow-y: auto; margin-top: 20px; }
-        
-        .cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; }
-        .item-info { flex-grow: 1; display: flex; justify-content: space-between; margin-right: 15px; }
-        .btn-remove { color: #ff5252; background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 5px; }
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        textarea { width: 100%; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; padding: 12px; border-radius: 12px; margin-top: 10px; resize: none; font-family: inherit; }
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .badge { font-size: 0.65rem; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="intro-space"><div class="earth-zoom"></div></div>
-
-    <div class="auth-container" id="auth-screen">
-        <div class="auth-card">
-            <h1 style="font-family:'Oswald'; letter-spacing:3px; margin-bottom:30px; color: white;">SOUVREIGN</h1>
-            <button class="btn-google-clean" id="btn-login">INICIAR SESIÓN CON GOOGLE</button>
+    <!-- PANTALLA DE ACCESO SEGURA -->
+    <div id="login-screen">
+        <div class="login-card">
+            <h1 style="font-family: 'Oswald'; letter-spacing: 3px; margin-bottom: 5px; color: #fff;">SOUVREIGN</h1>
+            <p style="font-size: 0.7rem; opacity: 0.4; letter-spacing: 2px; margin-bottom: 30px; text-transform: uppercase;">Control de Mando</p>
+            <input type="password" id="admin-pin" placeholder="INGRESAR PIN" style="text-align: center; letter-spacing: 5px;">
+            <button class="btn" style="margin-top: 25px;" onclick="checkPin()">ACCEDER</button>
         </div>
     </div>
 
-    <div class="cart-trigger" id="cart-btn">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span id="cart-badge">0</span>
-    </div>
-
-    <div id="app" style="display:none;">
-        <nav class="navbar">
-            <div id="menu-toggle" style="cursor:pointer; font-size:1.5rem;">☰</div>
-            <img src="panini.jpg" height="35" style="border-radius:8px;">
-            <img id="nav-avatar" src="" style="width:38px; border-radius:50%; border:2px solid var(--wc-cyan); cursor:pointer;">
-        </nav>
-
-        <div class="sidebar" id="sidebar">
-            <div class="nav-item" data-view="profile-view"><i class="fa-solid fa-circle-user"></i> MI PERFIL</div>
-            <div class="nav-item" data-view="album-view"><i class="fa-solid fa-copy"></i> PEDIR CARTAS</div>
-            <div class="nav-item" data-view="prices-view"><i class="fa-solid fa-gem"></i> CARTAS ESPECIALES</div>
-            <div class="nav-item" data-view="info-view"><i class="fa-solid fa-tags"></i> LISTA DE PRECIOS</div>
-            
-            <div style="margin-top:20px; padding:0 10px;">
-                <p style="font-size:0.7rem; opacity:0.6; text-transform:uppercase; letter-spacing:1px;">Nota de Pedido</p>
-                <textarea id="extra-request" rows="3" placeholder="Ej: Busco la #5 de México..."></textarea>
-            </div>
-
-            <a href="https://instagram.com/pablooib" target="_blank" class="ig-link">
-                <i class="fa-brands fa-instagram" style="font-size:1.5rem;"></i> @pablooib
-            </a>
-            <div class="nav-item" id="btn-logout" style="color:#ff5252; margin-top:15px;"><i class="fa-solid fa-power-off"></i> CERRAR SESIÓN</div>
-        </div>
-
-        <div class="cart-drawer" id="cart-drawer">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h2 style="font-family:'Oswald';">MI CARRITO</h2>
-                <i class="fa-solid fa-xmark" id="cart-close" style="font-size:1.5rem; cursor:pointer;"></i>
-            </div>
-            <div class="cart-items" id="cart-list"></div>
-            <div style="padding-top:20px; border-top:2px solid #000; margin-top:20px;">
-                <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:20px; font-size:1.3rem;">
-                    <span>TOTAL:</span>
-                    <span id="cart-total">Q0.00</span>
-                </div>
-                <button id="btn-send-order" style="width:100%; background:#25d366; color:#fff; border:none; padding:20px; border-radius:20px; font-weight:bold; cursor:pointer;">
-                    <i class="fa-brands fa-whatsapp"></i> ENVIAR PEDIDO
-                </button>
-            </div>
-        </div>
-
-        <div class="main-content">
-            <div id="profile-view" class="view">
-                <div style="text-align:center; background:var(--glass); padding:50px 20px; border-radius:35px;">
-                    <img id="profile-img" src="" style="width:130px; height:130px; border-radius:50%; border:4px solid var(--wc-cyan); object-fit:cover; margin-bottom:20px;">
-                    <h2 id="profile-name" style="font-family:'Oswald'; font-size:2.2rem;">---</h2>
-                    <p id="profile-email" style="opacity:0.6;">---</p>
-                </div>
-            </div>
-
-            <div id="album-view" class="view active">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
-                    <h2 id="group-title" style="font-family:'Oswald'; color:var(--wc-cyan); font-size:1.8rem;">GRUPO A</h2>
-                    <div style="display:flex; gap:10px;">
-                        <button id="group-prev" style="background:var(--glass); border:none; color:#fff; width:45px; height:45px; border-radius:50%;">◄</button>
-                        <button id="group-next" style="background:var(--glass); border:none; color:#fff; width:45px; height:45px; border-radius:50%;">►</button>
-                    </div>
-                </div>
-                <div id="country-scroll" style="display:flex; gap:12px; overflow-x:auto; padding-bottom:15px;"></div>
-                <h3 id="country-label" style="margin:25px 0 15px; font-family:'Oswald'; letter-spacing:1px;">PAÍS</h3>
-                <div class="sticker-grid" id="sticker-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(80px, 1fr)); gap:12px;"></div>
-            </div>
-
-            <div id="prices-view" class="view">
-                <h2 style="font-family:'Oswald'; text-align:center; margin-bottom:30px; color: var(--gold);">TIENDA ESPECIAL</h2>
-                <div id="special-store-container">Cargando catálogo especial...</div>
-            </div>
-
-            <div id="info-view" class="view">
-                <div style="background:var(--glass); padding:35px; border-radius:30px;">
-                    <h2 style="font-family:'Oswald'; margin-bottom:25px; color:var(--wc-cyan);">LISTA DE PRECIOS</h2>
-                    <div id="dynamic-info-list">Cargando precios base...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-<script type="module">
-    import { initializeApp } from "firebase/app";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "firebase/auth";
-    import { getFirestore, doc, collection, onSnapshot, setDoc, addDoc } from "firebase/firestore";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyCUdS0Gzfks0hQJCqTevtz5O2MFlRiHga4",
-        authDomain: "tiendaskin-bccba.firebaseapp.com",
-        projectId: "tiendaskin-bccba",
-        storageBucket: "tiendaskin-bccba.firebasestorage.app",
-        messagingSenderId: "280193902268",
-        appId: "1:280193902268:web:743d0e2172641be7a292b9"
-    };
-
-    const fApp = initializeApp(firebaseConfig);
-    const auth = getAuth(fApp);
-    const db = getFirestore(fApp);
-
-    let cart = [];
-    let currentGrp = 0;
-    let selectedCountry = "";
-    
-    // Lista de precios reactiva mapeada desde la colección "config/precios" de tu panel de administración
-    let preciosBase = {
-        "Sticker Normal": 2,
-        "Escudo (#1)": 10,
-        "Especial (#13)": 15
-    };
-
-    const grupos = [
-        {id: "A", paises: ["México", "Sudáfrica", "Rep. Corea", "Rep. Checa"]},
-        {id: "B", paises: ["Canadá", "Bosnia", "Qatar", "Suiza"]},
-        {id: "C", paises: ["Brasil", "Marruecos", "Haití", "Escocia"]},
-        {id: "D", paises: ["EE.UU.", "Paraguay", "Australia", "Turquía"]},
-        {id: "E", paises: ["Alemania", "Curazao", "C. Marfil", "Ecuador"]},
-        {id: "F", paises: ["Países Bajos", "Japón", "Túnez", "Albania"]},
-        {id: "G", paises: ["Bélgica", "Egipto", "Irán", "N. Zelanda"]},
-        {id: "H", paises: ["España", "Uruguay", "Arabia", "Cabo Verde"]},
-        {id: "I", paises: ["Francia", "Senegal", "Noruega", "Irak"]},
-        {id: "J", paises: ["Argentina", "Austria", "Argelia", "Jordania"]},
-        {id: "K", paises: ["Portugal", "Colombia", "Uzbekistán", "Jamaica"]},
-        {id: "L", paises: ["Inglaterra", "Croacia", "Ghana", "Panamá"]}
-    ];
-
-    const flags = { "México":"mx", "Sudáfrica":"za", "Rep. Corea":"kr", "Rep. Checa":"cz", "Canadá":"ca", "Bosnia":"ba", "Qatar":"qa", "Suiza":"ch", "Brasil":"br", "Marruecos":"ma", "Haití":"ht", "Escocia":"gb-sct", "EE.UU.":"us", "Paraguay":"py", "Australia":"au", "Turquía":"tr", "Alemania":"de", "Curazao":"cw", "C. Marfil":"ci", "Ecuador":"ec", "Países Bajos":"nl", "Japón":"jp", "Túnez":"tn", "Albania":"al", "Bélgica":"be", "Egipto":"eg", "Irán":"ir", "N. Zelanda":"nz", "España":"es", "Uruguay":"uy", "Arabia":"sa", "Cabo Verde":"cv", "Francia":"fr", "Senegal":"sn", "Noruega":"no", "Irak":"iq", "Argentina":"ar", "Austria":"at", "Argelia":"dz", "Jordania":"jo", "Portugal":"pt", "Colombia":"co", "Uzbekistán":"uz", "Jamaica":"jm", "Inglaterra":"gb-eng", "Croacia":"hr", "Ghana":"gh", "Panamá":"pa" };
-
-    setTimeout(() => { document.getElementById('intro-space')?.remove(); }, 4000);
-
-    // --- ESCUCHAS EN TIEMPO REAL DESDE EL PANEL DE CONTROL (FIRESTORE) ---
-    
-    // 1. Monitoreo de precios base modificados por el Admin
-    onSnapshot(doc(db, "config", "precios"), (snap) => {
-        if(snap.exists()) {
-            preciosBase = snap.data();
-        } else {
-            // Si la colección no está creada, la inicializa automáticamente en el panel
-            setDoc(doc(db, "config", "precios"), preciosBase);
-        }
-        renderStickers();
-        renderPriceList();
-    });
-
-    // 2. Monitoreo de catálogo de cartas especiales ("Tienda") administrado por el Admin
-    onSnapshot(collection(db, "especiales"), (snap) => {
-        const container = document.getElementById('special-store-container');
-        if(snap.empty) {
-            container.innerHTML = `<p style="text-align:center; opacity:0.5;">No hay cartas especiales registradas por el Administrador.</p>`;
-            return;
-        }
+    <!-- MENÚ LATERAL -->
+    <aside id="admin-sidebar">
+        <h2 style="font-family: 'Oswald'; color: var(--accent); text-align: center; margin-bottom: 40px; letter-spacing: 2px;">MASTER PANEL</h2>
+        <div class="nav-item active" onclick="app.setTab('precios', this)"><i class="fa-solid fa-dollar-sign"></i> Precios Álbum</div>
+        <div class="nav-item" onclick="app.setTab('tienda', this)"><i class="fa-solid fa-gem"></i> Tienda Especial</div>
+        <div class="nav-item" onclick="app.setTab('pedidos', this)"><i class="fa-solid fa-box"></i> Pedidos Recibidos</div>
+        <div class="nav-item" onclick="app.setTab('mejoras', this)"><i class="fa-solid fa-star"></i> Reseñas</div>
         
-        container.innerHTML = snap.docs.map(docSnap => {
-            const item = docSnap.data();
-            const iden = item.name.toUpperCase();
-            const isSel = cart.find(x => x.id === iden);
-            
-            // Lógica inteligente para heredar imágenes locales basándose en el nombre configurado
-            let imageSrc = "panini.jpg"; 
-            if(iden.includes("MESSI")) imageSrc = "imagenmessi.jpg";
-            if(iden.includes("RONALDO") || iden.includes("CR7")) imageSrc = "cristianomundial.jpg";
+        <div style="margin-top: auto;">
+            <div class="nav-item" onclick="location.reload()" style="color:var(--danger); opacity: 1;"><i class="fa-solid fa-power-off"></i> Salir del Panel</div>
+        </div>
+    </aside>
 
-            return `
-                <div class="special-card ${isSel ? 'selected' : ''}" data-id="${iden}" data-price="${item.price}">
-                    <img src="${imageSrc}" alt="${item.name}">
-                    <div class="special-info">
-                        <h3>${item.name}</h3>
-                        <p>Edición Exclusiva de Colección</p>
-                        <b style="color: var(--wc-cyan); font-size: 1.2rem;">Q${parseFloat(item.price).toFixed(2)}</b>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // Asignar eventos dinámicos a las nuevas tarjetas inyectadas
-        container.querySelectorAll('.special-card').forEach(card => {
-            card.onclick = () => {
-                const id = card.dataset.id;
-                const price = parseFloat(card.dataset.price);
-                addToCart(id, price);
-            };
-        });
-    });
-
-    // --- AUTENTICACIÓN ---
-    onAuthStateChanged(auth, user => {
-        if(user) {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('app').style.display = 'block';
-            document.getElementById('nav-avatar').src = user.photoURL;
-            document.getElementById('profile-img').src = user.photoURL;
-            document.getElementById('profile-name').innerText = user.displayName;
-            document.getElementById('profile-email').innerText = user.email;
-            selectedCountry = grupos[0].paises[0];
-            renderGroup();
-            renderStickers();
-        }
-    });
-
-    // --- FUNCIONALIDADES DEL ÁLBUM VINCULADAS A PRECIOS BASE ---
-    function renderGroup() {
-        const g = grupos[currentGrp];
-        document.getElementById('group-title').innerText = "GRUPO " + g.id;
-        const scroll = document.getElementById('country-scroll');
-        scroll.innerHTML = "";
-        g.paises.forEach(p => {
-            const card = document.createElement('div');
-            card.style = `min-width:120px; padding:15px; border-radius:18px; background:${selectedCountry === p ? 'var(--wc-cyan)' : 'var(--glass)'}; color:${selectedCountry === p ? '#000' : '#fff'}; text-align:center; cursor:pointer; transition:0.3s;`;
-            card.innerHTML = `<img src="https://flagcdn.com/w40/${flags[p]}.png" style="display:block; margin:0 auto 8px;"> <b>${p}</b>`;
-            card.onclick = () => { selectedCountry = p; renderGroup(); renderStickers(); };
-            scroll.appendChild(card);
-        });
-    }
-
-    function renderStickers() {
-        document.getElementById('country-label').innerText = selectedCountry.toUpperCase();
-        const grid = document.getElementById('sticker-grid'); 
-        if(!grid) return;
-        grid.innerHTML = "";
+    <!-- CONTENIDO PRINCIPAL -->
+    <main id="admin-main">
         
-        for(let i = 1; i <= 20; i++){
-            const id = `${selectedCountry} #${i}`;
-            const isSel = cart.find(x => x.id === id);
-            const precioActual = getCalculatedPrice(i);
-            
-            const s = document.createElement('div');
-            s.className = `stk ${isSel ? 'selected' : ''}`;
-            s.innerHTML = `<b>${i}</b><small>Q${precioActual.toFixed(2)}</small>`;
-            s.onclick = () => addToCart(id, precioActual);
-            grid.appendChild(s);
-        }
-        updateSpecialHighlights();
-    }
-
-    // Calcula el precio basándose estrictamente en las llaves que lee tu panel administrador
-    function getCalculatedPrice(n) { 
-        if (n === 1) return parseFloat(preciosBase["Escudo (#1)"] || 10);
-        if (n === 13) return parseFloat(preciosBase["Especial (#13)"] || 15);
-        return parseFloat(preciosBase["Sticker Normal"] || 2);
-    }
-
-    function renderPriceList() {
-        const div = document.getElementById('dynamic-info-list');
-        if(!div) return;
-        div.innerHTML = Object.entries(preciosBase).map(([key, value]) => `
-            <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
-                <span>${key}</span> <b>Q${parseFloat(value).toFixed(2)}</b>
+        <!-- SECCIÓN 1: PRECIOS DEL ÁLBUM -->
+        <section id="tab-precios" class="section active">
+            <h2 style="font-family: 'Oswald'; font-size: 2rem; margin-bottom: 5px; letter-spacing: 1px;">PRECIOS FIJOS DEL ÁLBUM</h2>
+            <p style="opacity:0.5; font-size:0.8rem; margin-bottom:30px;">Define los costos base de los stickers normales, escudos y especiales.</p>
+            <div class="card" style="max-width: 550px;">
+                <div id="price-inputs" style="margin-bottom: 25px;">Cargando datos desde Firestore...</div>
+                <button class="btn" onclick="app.savePrices()"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios Mundiales</button>
             </div>
-        `).join('');
-    }
+        </section>
 
-    // --- CONTROL DE CARRITO ---
-    function addToCart(id, price) {
-        const idx = cart.findIndex(x => x.id === id);
-        if(idx > -1) cart.splice(idx, 1);
-        else cart.push({id, price});
-        updateCartUI();
-        renderStickers();
-    }
+        <!-- SECCIÓN 2: TIENDA ESPECIAL (LEYENDAS) -->
+        <section id="tab-tienda" class="section">
+            <h2 style="font-family: 'Oswald'; font-size: 2rem; margin-bottom: 5px; letter-spacing: 1px;">INVENTARIO / TIENDA ESPECIAL</h2>
+            <p style="opacity:0.5; font-size:0.8rem; margin-bottom:30px;">Agrega cartas especiales o de edición Leyenda. El sistema de usuario las reflejará en tiempo real.</p>
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 25px; align-items: start;">
+                <div class="card">
+                    <h3 style="font-family: 'Oswald'; margin-bottom: 15px; font-size: 1.1rem; color: var(--accent);">NUEVA CARTA</h3>
+                    <label style="font-size: 0.75rem; opacity: 0.6;">Nombre del Jugador</label>
+                    <input type="text" id="t_name" placeholder="Ej: Lionel Messi">
+                    
+                    <label style="font-size: 0.75rem; opacity: 0.6; margin-top: 15px; display: block;">Precio Unitario (Q)</label>
+                    <input type="number" id="t_price" placeholder="Ej: 30">
+                    
+                    <button class="btn" style="margin-top:20px;" onclick="app.addStoreItem()"><i class="fa-solid fa-plus"></i> Añadir a la Vitrina</button>
+                </div>
+                <div>
+                    <h3 style="font-family: 'Oswald'; margin-bottom: 15px; font-size: 1.1rem;">CARTAS ACTIVAS EN LA APP</h3>
+                    <div id="list-store"></div>
+                </div>
+            </div>
+        </section>
 
-    function updateSpecialHighlights() {
-        document.querySelectorAll('.special-card').forEach(card => {
-            const id = card.dataset.id;
-            if(cart.find(x => x.id === id)) {
-                card.classList.add('selected');
-            } else {
-                card.classList.remove('selected');
+        <!-- SECCIÓN 3: PEDIDOS SINCRONIZADOS -->
+        <section id="tab-pedidos" class="section">
+            <h2 style="font-family: 'Oswald'; font-size: 2rem; margin-bottom: 5px; letter-spacing: 1px;">PEDIDOS ENTRANTES</h2>
+            <p style="opacity:0.5; font-size:0.8rem; margin-bottom:25px;">Historial de solicitudes enviadas por los clientes desde la app.</p>
+            <div id="list-pedidos" style="max-width: 800px;"></div>
+        </section>
+
+        <!-- SECCIÓN 4: RESEÑAS -->
+        <section id="tab-mejoras" class="section">
+            <h2 style="font-family: 'Oswald'; font-size: 2rem; margin-bottom: 5px; letter-spacing: 1px;">RESEÑAS & FEEDBACK</h2>
+            <p style="opacity:0.5; font-size:0.8rem; margin-bottom:25px;">Comentarios de satisfacción de tus clientes.</p>
+            <div id="list-feedback" style="max-width: 600px;"></div>
+        </section>
+    </main>
+
+    <!-- LÓGICA CORE DE ADMINISTRACIÓN (FIREBASE V10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, collection, onSnapshot, setDoc, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Configuración idéntica a tu app principal
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUdS0Gzfks0hQJCqTevtz5O2MFlRiHga4",
+            authDomain: "tiendaskin-bccba.firebaseapp.com",
+            projectId: "tiendaskin-bccba",
+            storageBucket: "tiendaskin-bccba.firebasestorage.app",
+            messagingSenderId: "280193902268",
+            appId: "1:280193902268:web:743d0e2172641be7a292b9"
+        };
+
+        const fApp = initializeApp(firebaseConfig);
+        const db = getFirestore(fApp);
+
+        // Validación de PIN de Seguridad
+        window.checkPin = function() {
+            const inputPin = document.getElementById('admin-pin').value;
+            if(inputPin === "123456") {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-sidebar').style.display = 'flex';
+                document.getElementById('admin-main').style.display = 'block';
+                app.init();
+            } else { 
+                alert("PIN maestro incorrecto de seguridad."); 
             }
-        });
-    }
+        };
 
-    function updateCartUI() {
-        document.getElementById('cart-badge').innerText = cart.length;
-        const list = document.getElementById('cart-list');
-        list.innerHTML = "";
-        let total = 0;
-        cart.forEach((item, index) => {
-            total += item.price;
-            const row = document.createElement('div');
-            row.className = 'cart-item-row';
-            row.innerHTML = `
-                <div class="item-info"><span>${item.id}</span><b>Q${item.price}.00</b></div>
-                <button class="btn-remove" data-index="${index}" data-id="${item.id}"><i class="fa-solid fa-trash-can"></i></button>
-            `;
-            list.appendChild(row);
-        });
-        document.getElementById('cart-total').innerText = `Q${total}.00`;
+        // Objeto Global de Operaciones Reactivas
+        window.app = {
+            setTab(t, el) {
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                document.getElementById('tab-'+t).classList.add('active');
+                el.classList.add('active');
+            },
 
-        list.querySelectorAll('.btn-remove').forEach(btn => {
-            btn.onclick = () => {
-                const idx = parseInt(btn.dataset.index);
-                const id = btn.dataset.id;
-                if(confirm(`¿Quitar "${id}" del pedido?`)) {
-                    cart.splice(idx, 1);
-                    updateCartUI();
-                    renderStickers();
+            // 1. GESTIÓN DE PRECIOS BASE (MUNDIAL/ÁLBUM)
+            initPrices() {
+                onSnapshot(doc(db, "config", "precios"), (snap) => {
+                    if(snap.exists()) {
+                        const data = snap.data();
+                        document.getElementById('price-inputs').innerHTML = Object.entries(data).map(([key, val]) => `
+                            <div class="price-row">
+                                <label style="font-weight: 600; font-size: 0.85rem;">${key}</label>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span style="opacity:0.5; font-size:0.9rem;">Q</span>
+                                    <input type="number" class="p-input" data-key="${key}" value="${val}" style="width:110px; margin:0; text-align:center; font-weight:bold; color:var(--accent);">
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        document.getElementById('price-inputs').innerHTML = `<p style="opacity:0.5;">Inicializando colección por defecto...</p>`;
+                    }
+                });
+            },
+
+            async savePrices() {
+                try {
+                    const data = {};
+                    document.querySelectorAll('.p-input').forEach(input => {
+                        data[input.dataset.key] = parseFloat(input.value) || 0;
+                    });
+                    await setDoc(doc(db, "config", "precios"), data);
+                    alert("¡Precios actualizados con éxito! Cambios aplicados a todos los usuarios.");
+                } catch (e) {
+                    alert("Error guardando los datos: " + e.message);
                 }
-            };
-        });
-    }
+            },
 
-    // --- INTEGRACIÓN DE PEDIDOS (WHATSAPP + BASE DE DATOS DEL ADMIN) ---
-    async function sendOrder() {
-        if(cart.length === 0) return alert("Carrito vacío");
-        const notes = document.getElementById('extra-request').value;
-        const itemsText = cart.map(x => `• ${x.id}`).join('\n');
-        const totalPriceStr = document.getElementById('cart-total').innerText;
-        
-        try {
-            // 1. Registra de forma nativa en el panel del Admin de Firebase
-            await addDoc(collection(db, "pedidos"), {
-                name: auth.currentUser.displayName,
-                details: cart.map(x => `${x.id} (Q${x.price})`).join(', ') + (notes ? ` | Nota: ${notes}` : ''),
-                status: "pendiente",
-                date: new Date().toISOString()
-            });
+            // 2. CONTROL DE TIENDA LEYENDA (EDICIÓN ESPECIAL)
+            initStore() {
+                onSnapshot(collection(db, "especiales"), (snap) => {
+                    const storeDiv = document.getElementById('list-store');
+                    if(snap.empty) {
+                        storeDiv.innerHTML = `<p style="opacity:0.4; font-style:italic; padding:20px 0;">No tienes artículos especiales en vitrina.</p>`;
+                        return;
+                    }
+                    storeDiv.innerHTML = snap.docs.map(d => `
+                        <div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-color:#2a2a3a;">
+                            <div>
+                                <span style="font-weight:bold; letter-spacing:0.5px;">${d.data().name}</span>
+                                <span style="color:var(--accent); margin-left:15px; font-weight:600;">Q${parseFloat(d.data().price).toFixed(2)}</span>
+                            </div>
+                            <button onclick="app.del('especiales','${d.id}')" style="color:var(--danger); background:none; border:none; cursor:pointer; font-size:0.8rem; font-weight:600;"><i class="fa-solid fa-trash"></i> Quitar</button>
+                        </div>
+                    `).join('');
+                });
+            },
 
-            // 2. Ejecuta la redirección API de WhatsApp preexistente
-            const waItems = cart.map(x => `• ${x.id}`).join('%0A');
-            const text = `*NUEVO PEDIDO SOUVREIGN*%0A*Cliente:* ${auth.currentUser.displayName}%0A%0A*Cartas:*%0A${waItems}%0A%0A*Nota:* ${encodeURIComponent(notes)}%0A%0A*TOTAL:* ${totalPriceStr}`;
-            window.open(`https://wa.me/50246199644?text=${text}`, '_blank');
+            async addStoreItem() {
+                const nameInput = document.getElementById('t_name');
+                const priceInput = document.getElementById('t_price');
+                const name = nameInput.value.trim();
+                const price = parseFloat(priceInput.value);
+
+                if(name && !isNaN(price)) {
+                    await addDoc(collection(db, "especiales"), { name, price });
+                    nameInput.value = "";
+                    priceInput.value = "";
+                } else {
+                    alert("Por favor rellena ambos campos con valores válidos.");
+                }
+            },
+
+            // 3. MONITOR DE PEDIDOS DE USUARIOS
+            initOrders() {
+                onSnapshot(collection(db, "pedidos"), (snap) => {
+                    const list = document.getElementById('list-pedidos');
+                    if(snap.empty) { list.innerHTML = `<p style="opacity:0.4;">No se registran solicitudes entrantes en la base de datos.</p>`; return; }
+                    
+                    list.innerHTML = snap.docs.map(d => {
+                        const p = d.data();
+                        const isPending = p.status === 'pendiente';
+                        return `
+                        <div class="card" style="border-left: 4px solid ${isPending ? 'orange' : '#00e5ff'}; background: ${isPending ? 'rgba(255,165,0,0.02)' : 'var(--card-bg)'}">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                                <b style="font-size:1.1rem; color:#fff;">${p.name || 'Cliente de la App'}</b>
+                                <span class="badge" style="background:${isPending ? 'rgba(255,165,0,0.2)' : 'rgba(0,229,255,0.2)'}; color:${isPending ? 'orange' : '#00e5ff'}">${p.status}</span>
+                            </div>
+                            <p style="font-size:0.85rem; opacity:0.8; line-height:1.5; margin-bottom:15px; color:#d1d1d6; background:rgba(0,0,0,0.2); padding:10px; border-radius:6px;">${p.details}</p>
+                            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                                ${isPending ? `<button class="btn" style="width:auto; padding:8px 15px; font-size:0.65rem; background:#222; color:#fff; border:1px solid #333;" onclick="app.updStatus('${d.id}','entregado')">MARCAR ENTREGADO</button>` : ''}
+                                <button class="btn btn-danger" style="width:auto; padding:8px 15px; font-size:0.65rem;" onclick="app.del('pedidos','${d.id}')">ELIMINAR LOG</button>
+                            </div>
+                        </div>`;
+                    }).reverse().join(''); // Coloca los pedidos más nuevos arriba
+                });
+            },
+
+            // 4. RESEÑAS DE ATENCIÓN O MEJORAS
+            initFeedback() {
+                onSnapshot(collection(db, "mejoras"), (snap) => {
+                    const list = document.getElementById('list-feedback');
+                    if(snap.empty) { list.innerHTML = `<p style="opacity:0.4;">No hay valoraciones enviadas todavía.</p>`; return; }
+                    list.innerHTML = snap.docs.map(d => `
+                        <div class="card">
+                            <div style="color:var(--gold); margin-bottom:8px;">${'★'.repeat(d.data().rating || 5)}</div>
+                            <p style="font-style:italic; font-size:0.9rem; margin-bottom:8px;">"${d.data().comment}"</p>
+                            <small style="opacity:0.5; display:block;">Por: ${d.data().user || 'Anónimo'}</small>
+                            <button onclick="app.del('mejoras','${d.id}')" style="color:var(--danger); background:none; border:none; margin-top:12px; cursor:pointer; font-size:0.75rem;"><i class="fa-solid fa-trash-can"></i> Eliminar</button>
+                        </div>
+                    `).join('');
+                });
+            },
+
+            async updStatus(id, s) { 
+                await updateDoc(doc(db, "pedidos", id), { status: s }); 
+            },
             
-            cart = [];
-            updateCartUI();
-            renderStickers();
-        } catch (error) {
-            alert("Error enviando orden al servidor de control: " + error.message);
-        }
-    }
+            async del(coleccion, id) { 
+                if(confirm("¿Seguro que deseas eliminar permanentemente este registro del servidor?")) {
+                    await deleteDoc(doc(db, coleccion, id)); 
+                }
+            },
 
-    // --- MANEJO DE INTERFAZ GENERAL & EVENTOS ---
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-    function toggleCart() { document.getElementById('cart-drawer').classList.toggle('active'); }
-    
-    function showView(id) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.getElementById('sidebar').classList.remove('active');
-    }
-
-    function changeGroup(d) { 
-        currentGrp = (currentGrp + d + grupos.length) % grupos.length; 
-        renderGroup(); 
-    }
-
-    document.getElementById('menu-toggle').onclick = toggleSidebar;
-    document.getElementById('cart-btn').onclick = toggleCart;
-    document.getElementById('cart-close').onclick = toggleCart;
-    document.getElementById('group-prev').onclick = () => changeGroup(-1);
-    document.getElementById('group-next').onclick = () => changeGroup(1);
-    document.getElementById('btn-send-order').onclick = sendOrder;
-    
-    document.getElementById('btn-login').onclick = () => signInWithPopup(auth, new GoogleAuthProvider());
-    document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
-
-    document.querySelectorAll('.sidebar .nav-item[data-view]').forEach(item => {
-        item.onclick = () => showView(item.dataset.view);
-    });
-</script>
+            init() {
+                this.initPrices();
+                this.initStore();
+                this.initOrders();
+                this.initFeedback();
+            }
+        };
+    </script>
 </body>
 </html>

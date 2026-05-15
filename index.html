@@ -57,15 +57,19 @@
         .btn-danger { background: none; border: 1px solid var(--danger); color: var(--danger); }
         .btn-danger:hover { background: var(--danger); color: white; box-shadow: none; }
 
-        /* Filas de Configuración de Precios */
-        .price-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        /* --- CUADRÍCULA INTERACTIVA DE PRECIOS DE ESTAMPAS --- */
+        .admin-sticker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; margin-top: 25px; }
+        .admin-stk-item { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 16px; text-align: center; position: relative; }
+        .admin-stk-item b { font-family: 'Oswald'; font-size: 1.2rem; color: #fff; display: block; margin-bottom: 5px; }
+        .admin-stk-item.cromo { border-color: var(--gold); background: rgba(255, 215, 0, 0.03); }
+        .admin-stk-item.estadio { border-color: var(--wc-cyan); background: rgba(0, 229, 255, 0.03); }
+        .admin-stk-item input { text-align: center; padding: 6px; font-size: 0.9rem; font-weight: bold; color: var(--wc-cyan); margin-top: 5px; border-radius: 8px; }
 
         /* Panel de Pedidos */
         .order-card { border-left: 4px solid var(--wc-cyan); background: rgba(255,255,255,0.02); }
         .order-card.pendiente { border-left-color: var(--gold); }
         .badge { font-size: 0.7rem; padding: 5px 12px; border-radius: 50px; font-weight: bold; text-transform: uppercase; }
         
-        /* Layout Grid para las Leyendas */
         .grid-two-columns { display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; align-items: start; }
         @media(max-width: 768px) { .grid-two-columns { grid-template-columns: 1fr; } main { margin-left: 0; padding: 20px; } aside { display: none !important; } }
     </style>
@@ -88,7 +92,7 @@
             <h2 style="font-family:'Oswald'; color: var(--wc-cyan); letter-spacing:2px;">MASTER PANEL</h2>
             <p style="font-size:0.65rem; opacity:0.4;">Sincronizado en Tiempo Real</p>
         </div>
-        <div class="nav-item active" onclick="switchView('precios-view', this)"><i class="fa-solid fa-tags"></i> Precios Base</div>
+        <div class="nav-item active" onclick="switchView('inventario-view', this)"><i class="fa-solid fa-map"></i> Catálogo Completo</div>
         <div class="nav-item" onclick="switchView('leyendas-view', this)"><i class="fa-solid fa-gem"></i> Tienda Especial</div>
         <div class="nav-item" onclick="switchView('pedidos-view', this)"><i class="fa-solid fa-box-open"></i> Pedidos Recibidos</div>
         
@@ -100,14 +104,25 @@
     <!-- CUERPO PRINCIPAL -->
     <main id="main-content">
         
-        <!-- VISTA 1: CONFIGURACIÓN DE PRECIOS BASE -->
-        <div id="precios-view" class="view active">
-            <h2 style="font-family:'Oswald'; font-size:2.2rem; margin-bottom:5px;">PRECIOS MUNDIALES BASE</h2>
-            <p style="opacity:0.5; font-size:0.85rem; margin-bottom:30px;">Edita los costos globales para las tarjetas del álbum que se renderizan en el catálogo del usuario.</p>
+        <!-- VISTA 1: GESTIÓN DE PRECIOS POR PAÍS Y ESTAMPA -->
+        <div id="inventario-view" class="view active">
+            <h2 style="font-family:'Oswald'; font-size:2.2rem; margin-bottom:5px;">VALORES DEL ÁLBUM</h2>
+            <p style="opacity:0.5; font-size:0.85rem; margin-bottom:25px;">Selecciona un país para desglosar sus 20 estampas y cambiar cualquier precio de forma individual.</p>
             
-            <div class="card" style="max-width:600px;">
-                <div id="container-precios-base" style="margin-bottom:25px;">Cargando base de datos...</div>
-                <button class="btn" onclick="adminApp.savePrices()"><i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Precios Base</button>
+            <div class="card">
+                <div style="max-width: 400px;">
+                    <label style="font-size: 0.75rem; opacity: 0.6; text-transform: uppercase; font-weight: 600; letter-spacing: 1px;">Seleccionar País Seleccionado</label>
+                    <select id="admin-country-selector" onchange="adminApp.loadCountryStickers()">
+                        <!-- Se auto-rellena con tus 48 países -->
+                    </select>
+                </div>
+
+                <!-- Grid Dinámico de Estampas -->
+                <div class="admin-sticker-grid" id="admin-grid-container"></div>
+                
+                <div style="margin-top: 35px; max-width: 300px;">
+                    <button class="btn" onclick="adminApp.saveCountryPrices()"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios País</button>
+                </div>
             </div>
         </div>
 
@@ -147,7 +162,7 @@
     <!-- MÓDULO CONTROLADOR INTEGRADO -->
     <script type="module">
         import { initializeApp } from "firebase/app";
-        import { getFirestore, doc, collection, onSnapshot, setDoc, addDoc, deleteDoc, updateDoc } from "firebase/firestore";
+        import { getFirestore, doc, collection, onSnapshot, setDoc, addDoc, deleteDoc, updateDoc, getDoc } from "firebase/firestore";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCUdS0Gzfks0hQJCqTevtz5O2MFlRiHga4",
@@ -160,6 +175,30 @@
 
         const fApp = initializeApp(firebaseConfig);
         const db = getFirestore(fApp);
+
+        // Tu Array de Estructura de Países exacta
+        const listadoGrupos = [
+            {id: "A", paises: ["México", "Sudáfrica", "Rep. Corea", "Rep. Checa"]},
+            {id: "B", paises: ["Canadá", "Bosnia", "Qatar", "Suiza"]},
+            {id: "C", paises: ["Brasil", "Marruecos", "Haití", "Escocia"]},
+            {id: "D", paises: ["EE.UU.", "Paraguay", "Australia", "Turquía"]},
+            {id: "E", paises: ["Alemania", "Curazao", "C. Marfil", "Ecuador"]},
+            {id: "F", paises: ["Países Bajos", "Japón", "Túnez", "Albania"]},
+            {id: "G", paises: ["Bélgica", "Egipto", "Irán", "N. Zelanda"]},
+            {id: "H", paises: ["España", "Uruguay", "Arabia", "Cabo Verde"]},
+            {id: "I", paises: ["Francia", "Senegal", "Noruega", "Irak"]},
+            {id: "J", paises: ["Argentina", "Austria", "Argelia", "Jordania"]},
+            {id: "K", paises: ["Portugal", "Colombia", "Uzbekistán", "Jamaica"]},
+            {id: "L", paises: ["Inglaterra", "Croacia", "Ghana", "Panamá"]}
+        ];
+
+        // Extraer lista plana de países ordenados
+        const todosLosPaises = [];
+        listadoGrupos.forEach(g => todosLosPaises.push(...g.paises));
+
+        // Inicializar Selector de Países en la Interfaz
+        const selector = document.getElementById('admin-country-selector');
+        selector.innerHTML = todosLosPaises.map(p => `<option value="${p}">${p.toUpperCase()}</option>`).join('');
 
         // Seguridad Básica de Acceso al Panel
         window.checkPin = function() {
@@ -174,7 +213,6 @@
             }
         };
 
-        // Manejo de Navegación de Vistas Internas
         window.switchView = function(viewId, element) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('aside .nav-item').forEach(n => n.classList.remove('active'));
@@ -184,48 +222,74 @@
 
         window.adminApp = {
             
-            // 1. ESCUCHA DE PRECIOS BASE CON CONTROL DE FALLOS (Por si el documento aún no se crea)
-            listenPrices() {
-                onSnapshot(doc(db, "config", "precios"), (snap) => {
-                    const box = document.getElementById('container-precios-base');
-                    
-                    // Si el documento existe, toma sus llaves dinámicas. Si no, genera valores base por defecto.
-                    const precios = snap.exists() ? snap.data() : {
-                        "Fifa Cromo": 0,
-                        "Estadio": 0,
-                        "Leyenda": 0,
-                        "Normal": 0
-                    };
+            // Cargar los precios del país seleccionado desde Firestore
+            async loadCountryStickers() {
+                const pais = document.getElementById('admin-country-selector').value;
+                const gridContainer = document.getElementById('admin-grid-container');
+                gridContainer.innerHTML = "<p style='opacity:0.5;'>Consultando datos del país...</p>";
 
-                    box.innerHTML = Object.entries(precios).map(([tipo, valor]) => `
-                        <div class="price-row">
-                            <span style="font-weight:600; font-size:0.95rem;">${tipo}</span>
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <span style="opacity:0.4; font-weight:600;">Q</span>
-                                <input type="number" class="val-input" data-key="${tipo}" value="${valor}" step="0.01" style="width:120px; margin:0; text-align:center; font-weight:bold; color:var(--wc-cyan); border-radius:10px; padding:8px;">
-                            </div>
-                        </div>
-                    `).join('');
-                }, (error) => {
-                    console.error("Error leyendo precios base:", error);
-                    document.getElementById('container-precios-base').innerHTML = `<p style="color:var(--danger)">Error de permisos o conexión en Firestore.</p>`;
-                });
-            },
-
-            async savePrices() {
                 try {
-                    const dataActualizada = {};
-                    document.querySelectorAll('.val-input').forEach(inp => {
-                        dataActualizada[inp.dataset.key] = parseFloat(inp.value) || 0;
-                    });
-                    await setDoc(doc(db, "config", "precios"), dataActualizada);
-                    alert("¡Precios base actualizados con éxito!");
-                } catch (err) {
-                    alert("Error guardando cambios en la nube: " + err.message);
+                    // Consultamos el documento del país dentro de la colección "precios_estampas"
+                    const docSnap = await getDoc(doc(db, "precios_estampas", pais));
+                    let preciosGuardados = {};
+                    if(docSnap.exists()){
+                        preciosGuardados = docSnap.data();
+                    }
+
+                    let htmlCards = "";
+                    for(let i = 1; i <= 20; i++) {
+                        // Respetamos tus reglas por defecto exactas si no hay un precio modificado guardado
+                        let precioPorDefecto = (i === 1) ? 10 : (i === 13 ? 15 : 2);
+                        if(pais === "Portugal" && i === 15) precioPorDefecto = 40;
+
+                        // Si ya se modificó antes en la base de datos, toma ese valor personalizado
+                        let precioFinal = preciosGuardados.hasOwnProperty(i) ? preciosGuardados[i] : precioPorDefecto;
+
+                        let claseEstilo = "";
+                        if(i === 1) claseEstilo = "cromo";
+                        if(i === 13) claseEstilo = "estadio";
+
+                        htmlCards += `
+                            <div class="admin-stk-item ${claseEstilo}">
+                                <b>#${i}</b>
+                                <span style="font-size:0.65rem; opacity:0.4; display:block;">Estampa</span>
+                                <div style="display:flex; align-items:center; justify-content:center; gap:4px; margin-top:5px;">
+                                    <span style="font-size:0.8rem; opacity:0.5; font-weight:bold;">Q</span>
+                                    <input type="number" class="stk-price-input" data-num="${i}" value="${precioFinal}" step="1" style="margin:0;">
+                                </div>
+                            </div>
+                        `;
+                    }
+                    gridContainer.innerHTML = htmlCards;
+
+                } catch (error) {
+                    console.error("Error cargando estampas:", error);
+                    gridContainer.innerHTML = "<p style='color:var(--danger);'>Error al conectar con la base de datos.</p>";
                 }
             },
 
-            // 2. CONTROL DE CATÁLOGO DE LEYENDAS ESPECIALES
+            // Guardar las modificaciones del país seleccionado
+            async saveCountryPrices() {
+                const pais = document.getElementById('admin-country-selector').value;
+                const inputs = document.querySelectorAll('.stk-price-input');
+                const nuevosPrecios = {};
+
+                inputs.forEach(inp => {
+                    const numeroEstampa = inp.dataset.num;
+                    const valor = parseFloat(inp.value) || 0;
+                    nuevosPrecios[numeroEstampa] = valor;
+                });
+
+                try {
+                    // Guarda o sobreescribe los precios de las 20 estampas del país
+                    await setDoc(doc(db, "precios_estampas", pais), nuevosPrecios);
+                    alert(`¡Precios de ${pais.toUpperCase()} actualizados correctamente!`);
+                } catch (error) {
+                    alert("Error al guardar los precios: " + error.message);
+                }
+            },
+
+            // CONTROL DE CATÁLOGO DE LEYENDAS ESPECIALES
             listenLegends() {
                 onSnapshot(collection(db, "especiales"), (snap) => {
                     const container = document.getElementById('container-leyendas-list');
@@ -245,8 +309,6 @@
                             </div>
                         `;
                     }).join('');
-                }, (error) => {
-                    console.error("Error leyendo especiales:", error);
                 });
             },
 
@@ -273,7 +335,7 @@
                 }
             },
 
-            // 3. MONITOR LOGÍSTICO DE PEDIDOS EN COLA
+            // MONITOR LOGÍSTICO DE PEDIDOS EN COLA
             listenOrders() {
                 onSnapshot(collection(db, "pedidos"), (snap) => {
                     const box = document.getElementById('container-pedidos-list');
@@ -302,8 +364,6 @@
                             </div>
                         `;
                     }).reverse().join('');
-                }, (error) => {
-                    console.error("Error leyendo pedidos:", error);
                 });
             },
 
@@ -318,7 +378,7 @@
             },
 
             startEngine() {
-                this.listenPrices();
+                this.loadCountryStickers(); // Carga el primer país de la lista al entrar
                 this.listenLegends();
                 this.listenOrders();
             }

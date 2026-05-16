@@ -91,7 +91,7 @@
             <h2 style="font-family:'Oswald'; color: var(--wc-cyan); letter-spacing:2px;">MASTER PANEL</h2>
             <p style="font-size:0.65rem; opacity:0.4;">Sincronizado en Tiempo Real</p>
         </div>
-        <div class="nav-item active" onclick="switchView('inventario-view', this)"><i class="fa-solid fa-map"></i> Estampas Países</div>
+        <div class="nav-item active" onclick="switchView('inventario-view', this)"><i class="fa-solid fa-map"></i> Estampas Colecciones</div>
         <div class="nav-item" onclick="switchView('royal-view', this)"><i class="fa-solid fa-crown"></i> Royal Legends</div>
         <div class="nav-item" onclick="switchView('pedidos-view', this)"><i class="fa-solid fa-box-open"></i> Pedidos Recibidos</div>
         
@@ -103,16 +103,16 @@
     <!-- CUERPO PRINCIPAL -->
     <main id="main-content">
         
-        <!-- VISTA 1: VALORES DEL ÁLBUM POR PAÍS -->
+        <!-- VISTA 1: VALORES DEL ÁLBUM POR PAÍS / SECCIÓN -->
         <div id="inventario-view" class="view active">
             <h2 style="font-family:'Oswald'; font-size:2.2rem; margin-bottom:5px;">VALORES DEL ÁLBUM</h2>
-            <p style="opacity:0.5; font-size:0.85rem; margin-bottom:25px;">Modifica de forma personalizada los precios y disponibilidad de las 20 estampas de cada país.</p>
+            <p style="opacity:0.5; font-size:0.85rem; margin-bottom:25px;">Modifica de forma personalizada los precios y disponibilidad de las estampas de cada país o sección especial.</p>
             <div class="card">
                 <div style="max-width: 400px;">
                     <select id="admin-country-selector" onchange="adminApp.loadCountryStickers()"></select>
                 </div>
                 <div class="admin-sticker-grid" id="admin-grid-container"></div>
-                <button class="btn" style="margin-top:30px; max-width:300px;" onclick="adminApp.saveCountryPrices()"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios País</button>
+                <button class="btn" style="margin-top:30px; max-width:300px;" onclick="adminApp.saveCountryPrices()"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios Selección</button>
             </div>
         </div>
 
@@ -164,8 +164,8 @@
             {id: "I", paises: ["Francia", "Senegal", "Noruega", "Irak"]},
             {id: "J", paises: ["Argentina", "Austria", "Argelia", "Jordania"]},
             {id: "K", paises: ["Portugal", "Colombia", "Uzbekistán", "Jamaica"]},
-            {id: "L", paises: ["Inglaterra", "Croacia", "Ghana", "Panamá"]}
-
+            {id: "L", paises: ["Inglaterra", "Croacia", "Ghana", "Panamá"]},
+            {id: "CAMPEONES DEL MUNDO", paises: ["fwc 9", "fwc 10", "fwc 11", "fwc 12", "fwc 13", "fwc 14", "fwc 15", "fwc 16", "fwc 17", "fwc 18", "fwc 19"]}
         ];
 
         const todosLosPaises = [];
@@ -191,66 +191,101 @@
         };
 
         window.adminApp = {
-            // CONTROL DE PRECIOS Y DISPONIBILIDAD POR PAÍSES
+            // CONTROL DE PRECIOS Y DISPONIBILIDAD POR PAÍSES / COLECCIONES
             async loadCountryStickers() {
-                const pais = document.getElementById('admin-country-selector').value;
+                const seleccion = document.getElementById('admin-country-selector').value;
                 const gridContainer = document.getElementById('admin-grid-container');
                 try {
-                    const docSnap = await getDoc(doc(db, "precios_estampas", pais));
+                    const docSnap = await getDoc(doc(db, "precios_estampas", seleccion));
                     let preciosGuardados = docSnap.exists() ? docSnap.data() : {};
 
                     let htmlCards = "";
-                    for(let i = 1; i <= 20; i++) {
-                        let precioDefecto = (i === 1) ? 10 : (i === 13 ? 15 : 2);
-                        if(pais === "Portugal" && i === 15) precioDefecto = 40;
-                        
-                        let precioFinal = precioDefecto;
-                        let disponibleFinal = true;
 
-                        if (preciosGuardados.hasOwnProperty(i)) {
-                            if (typeof preciosGuardados[i] === 'object' && preciosGuardados[i] !== null) {
-                                precioFinal = preciosGuardados[i].precio ?? precioDefecto;
-                                disponibleFinal = preciosGuardados[i].disponible ?? true;
-                            } else {
-                                precioFinal = preciosGuardados[i];
+                    // Si es la sección especial de Campeones del mundo, iteramos sobre sus códigos fwc
+                    if(seleccion.startsWith("fwc")) {
+                        const grupoCampeones = listadoGrupos.find(g => g.id === "CAMPEONES DEL MUNDO");
+                        grupoCampeones.paises.forEach(codigo => {
+                            let precioDefecto = 15; // Precio base estándar para cromos especiales fwc
+                            let precioFinal = precioDefecto;
+                            let disponibleFinal = true;
+
+                            if (preciosGuardados.hasOwnProperty(codigo)) {
+                                if (typeof preciosGuardados[codigo] === 'object' && preciosGuardados[codigo] !== null) {
+                                    precioFinal = preciosGuardados[codigo].precio ?? precioDefecto;
+                                    disponibleFinal = preciosGuardados[codigo].disponible ?? true;
+                                } else {
+                                    precioFinal = preciosGuardados[codigo];
+                                }
                             }
-                        }
 
-                        htmlCards += `
-                            <div class="admin-stk-item" data-num="${i}">
-                                <b>#${i}</b>
-                                <label>Precio (Q)</label>
-                                <input type="number" class="stk-price-input" value="${precioFinal}">
-                                
-                                <label>Estado</label>
-                                <select class="stk-status-select">
-                                    <option value="true" ${disponibleFinal ? 'selected' : ''}>DISPONIBLE</option>
-                                    <option value="false" ${!disponibleFinal ? 'selected' : ''}>AGOTADO</option>
-                                </select>
-                            </div>
-                        `;
+                            htmlCards += `
+                                <div class="admin-stk-item" data-num="${codigo}">
+                                    <b>${codigo.toUpperCase()}</b>
+                                    <label>Precio (Q)</label>
+                                    <input type="number" class="stk-price-input" value="${precioFinal}">
+                                    
+                                    <label>Estado</label>
+                                    <select class="stk-status-select">
+                                        <option value="true" ${disponibleFinal ? 'selected' : ''}>DISPONIBLE</option>
+                                        <option value="false" ${!disponibleFinal ? 'selected' : ''}>AGOTADO</option>
+                                    </select>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        // Comportamiento normal para los 12 grupos de países (1 al 20)
+                        for(let i = 1; i <= 20; i++) {
+                            let precioDefecto = (i === 1) ? 10 : (i === 13 ? 15 : 2);
+                            if(seleccion === "Portugal" && i === 15) precioDefecto = 40;
+                            
+                            let precioFinal = precioDefecto;
+                            let disponibleFinal = true;
+
+                            if (preciosGuardados.hasOwnProperty(i)) {
+                                if (typeof preciosGuardados[i] === 'object' && preciosGuardados[i] !== null) {
+                                    precioFinal = preciosGuardados[i].precio ?? precioDefecto;
+                                    disponibleFinal = preciosGuardados[i].disponible ?? true;
+                                } else {
+                                    precioFinal = preciosGuardados[i];
+                                }
+                            }
+
+                            htmlCards += `
+                                <div class="admin-stk-item" data-num="${i}">
+                                    <b>#${i}</b>
+                                    <label>Precio (Q)</label>
+                                    <input type="number" class="stk-price-input" value="${precioFinal}">
+                                    
+                                    <label>Estado</label>
+                                    <select class="stk-status-select">
+                                        <option value="true" ${disponibleFinal ? 'selected' : ''}>DISPONIBLE</option>
+                                        <option value="false" ${!disponibleFinal ? 'selected' : ''}>AGOTADO</option>
+                                    </select>
+                                </div>
+                            `;
+                        }
                     }
                     gridContainer.innerHTML = htmlCards;
                 } catch (e) { console.error(e); }
             },
 
             async saveCountryPrices() {
-                const pais = document.getElementById('admin-country-selector').value;
-                const nuevosDatosPaises = {};
+                const seleccion = document.getElementById('admin-country-selector').value;
+                const nuevosDatos = {};
                 
                 document.querySelectorAll('.admin-stk-item').forEach(item => {
-                    const num = item.dataset.num;
+                    const clave = item.dataset.num; // Puede ser el número (1-20) o el código string (fwc X)
                     const precio = parseFloat(item.querySelector('.stk-price-input').value) || 0;
                     const disponible = item.querySelector('.stk-status-select').value === "true";
                     
-                    nuevosDatosPaises[num] = {
+                    nuevosDatos[clave] = {
                         precio: precio,
                         disponible: disponible
                     };
                 });
 
                 try {
-                    await setDoc(doc(db, "precios_estampas", pais), nuevosDatosPaises);
+                    await setDoc(doc(db, "precios_estampas", seleccion), nuevosDatos);
                     alert("¡Precios y disponibilidad actualizados de manera exitosa!");
                 } catch (e) { alert(e.message); }
             },

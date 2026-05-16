@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOUVREIGN | Panel de Control FIFA 2026</title>
     <link rel="icon" type="image/jpg" href="panini.jpg">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght=500;700&family=Poppins:wght=300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script type="importmap">
@@ -42,13 +42,11 @@
             overflow-x: hidden;
         }
 
-        /* Scrollbar Personalizado */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--wc-cyan); }
 
-        /* --- LOGIN MAESTRO --- */
         #login-screen { 
             position: fixed; 
             inset: 0; 
@@ -70,7 +68,6 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        /* --- SIDEBAR --- */
         aside { 
             width: 280px; 
             background: #060612; 
@@ -107,7 +104,6 @@
         .nav-item:hover { background: var(--glass); opacity: 0.9; color: var(--wc-cyan); }
         .nav-item.active { opacity: 1; color: var(--wc-cyan); background: rgba(0, 229, 255, 0.05); border-left: 4px solid var(--wc-cyan); font-weight: 600; }
 
-        /* --- INTERFAZ PREMIUM --- */
         .card { 
             background: rgba(255, 255, 255, 0.02); 
             backdrop-filter: blur(10px);
@@ -160,7 +156,6 @@
         .btn-danger { background: none; border: 1px solid var(--danger); color: var(--danger); }
         .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 8px 20px rgba(255, 82, 82, 0.25); }
 
-        /* Grids Estampas */
         .admin-sticker-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); 
@@ -202,7 +197,6 @@
         }
         .admin-stk-item select, .admin-stk-item input { padding: 10px; font-size: 0.85rem; margin-top: 4px; border-radius: 10px; }
         
-        /* Grid de Royal Legends */
         .royal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-top: 25px; }
         .royal-manage-card { 
             background: rgba(10, 10, 26, 0.4); 
@@ -214,7 +208,6 @@
         }
         .royal-manage-card:hover { transform: translateY(-5px); }
 
-        /* Pedidos */
         .order-card { border-left: 4px solid var(--wc-cyan); background: rgba(255,255,255,0.01); transition: all 0.3s; }
         .order-card:hover { background: rgba(255,255,255,0.03); }
         .order-card.pendiente { border-left-color: var(--gold); }
@@ -226,7 +219,6 @@
 </head>
 <body>
 
-    <!-- CONTROL PIN MAESTRO -->
     <div id="login-screen">
         <div class="login-card">
             <h1 style="font-family:'Oswald'; letter-spacing:4px; margin-bottom:5px; font-size: 2.5rem; color: #fff;">SOUVREIGN</h1>
@@ -236,7 +228,6 @@
         </div>
     </div>
 
-    <!-- MENÚ LATERAL -->
     <aside id="sidebar">
         <div style="text-align:center; margin-bottom:45px;">
             <h2 style="font-family:'Oswald'; color: var(--wc-cyan); letter-spacing:3px; font-size: 1.8rem;">MASTER PANEL</h2>
@@ -251,10 +242,8 @@
         </div>
     </aside>
 
-    <!-- CUERPO PRINCIPAL -->
     <main id="main-content">
         
-        <!-- VISTA 1: VALORES DEL ÁLBUM POR PAÍS / SECCIÓN -->
         <div id="inventario-view" class="view active">
             <h2 style="font-family:'Oswald'; font-size:2.5rem; margin-bottom:5px; letter-spacing: 1px;">VALORES DEL ÁLBUM</h2>
             <p style="opacity:0.5; font-size:0.9rem; margin-bottom:35px;">Modifica de forma personalizada los precios y disponibilidad de las estampas de cada país o sección especial.</p>
@@ -268,7 +257,6 @@
             </div>
         </div>
 
-        <!-- VISTA 2: NUEVO APARTADO PARA ROYAL LEGENDS -->
         <div id="royal-view" class="view">
             <h2 style="font-family:'Oswald'; font-size:2.5rem; margin-bottom:5px; color:var(--gold); letter-spacing: 1px;">ROYAL LEGENDS CONTROL</h2>
             <p style="opacity:0.5; font-size:0.9rem; margin-bottom:35px;">Modifica precios y cambia el estado de stock al instante para las cartas estáticas del usuario.</p>
@@ -279,7 +267,6 @@
             <button class="btn" style="margin-top:40px; max-width:320px; background: var(--gold); color: #000;" onclick="adminApp.saveRoyalLegends()"><i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Vitrina Royal</button>
         </div>
 
-        <!-- VISTA 3: LOGS DE PEDIDOS -->
         <div id="pedidos-view" class="view">
             <h2 style="font-family:'Oswald'; font-size:2.5rem; margin-bottom:5px; letter-spacing: 1px;">HISTORIAL DE PEDIDOS</h2>
             <p style="opacity:0.5; font-size:0.9rem; margin-bottom:35px;">Revisa y gestiona las solicitudes de compra recibidas en el sistema de manera inmediata.</p>
@@ -361,21 +348,25 @@
                     if(seleccion === "CAMPEONES DEL MUNDO") {
                         const grupoCampeones = listadoGrupos.find(g => g.id === "CAMPEONES DEL MUNDO");
                         grupoCampeones.paises.forEach(codigo => {
+                            // Sanitizar clave buscando tanto con espacio como con guión bajo para compatibilidad
+                            let claveSanitizada = codigo.replace(" ", "_");
                             let precioDefecto = 15; 
                             let precioFinal = precioDefecto;
                             let disponibleFinal = true;
 
-                            if (preciosGuardados.hasOwnProperty(codigo)) {
-                                if (typeof preciosGuardados[codigo] === 'object' && preciosGuardados[codigo] !== null) {
-                                    precioFinal = preciosGuardados[codigo].precio ?? precioDefecto;
-                                    disponibleFinal = preciosGuardados[codigo].disponible ?? true;
+                            let datosCromo = preciosGuardados[claveSanitizada] || preciosGuardados[codigo];
+
+                            if (datosCromo !== undefined) {
+                                if (typeof datosCromo === 'object' && datosCromo !== null) {
+                                    precioFinal = datosCromo.precio ?? precioDefecto;
+                                    disponibleFinal = datosCromo.disponible ?? true;
                                 } else {
-                                    precioFinal = preciosGuardados[codigo];
+                                    precioFinal = datosCromo;
                                 }
                             }
 
                             htmlCards += `
-                                <div class="admin-stk-item" data-num="${codigo}">
+                                <div class="admin-stk-item" data-num="${claveSanitizada}">
                                     <b>${codigo.toUpperCase()}</b>
                                     <label>Precio (Q)</label>
                                     <input type="number" class="stk-price-input" value="${precioFinal}">
@@ -407,7 +398,7 @@
 
                             htmlCards += `
                                 <div class="admin-stk-item" data-num="${i}">
-                                    <b>#${i}</b>
+                                    #${i}</b>
                                     <label>Precio (Q)</label>
                                     <input type="number" class="stk-price-input" value="${precioFinal}">
                                     

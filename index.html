@@ -203,7 +203,6 @@
                         let precioDefecto = (i === 1) ? 10 : (i === 13 ? 15 : 2);
                         if(pais === "Portugal" && i === 15) precioDefecto = 40;
                         
-                        // Validar si los datos guardados son un objeto estructurado {precio, disponible} o solo el número directo histórico
                         let precioFinal = precioDefecto;
                         let disponibleFinal = true;
 
@@ -212,7 +211,7 @@
                                 precioFinal = preciosGuardados[i].precio ?? precioDefecto;
                                 disponibleFinal = preciosGuardados[i].disponible ?? true;
                             } else {
-                                precioFinal = preciosGuardados[i]; // Soporte retroactivo si solo guardabas el número
+                                precioFinal = preciosGuardados[i];
                             }
                         }
 
@@ -327,8 +326,19 @@
                 });
             },
 
-            async updateOrderStatus(id, nuevoEstado) { await updateDoc(doc(db, "pedidos", id), { status: nuevoEstado }); },
-            async deleteOrder(id) { if(confirm("¿Eliminar pedido?")) await deleteDoc(doc(db, "pedidos", id)); },
+            async updateOrderStatus(id, nuevoEstado) { 
+                try {
+                    await updateDoc(doc(db, "pedidos", id), { status: nuevoEstado }); 
+                } catch (e) { console.error("Error al actualizar: ", e); }
+            },
+            
+            async deleteOrder(id) { 
+                if(confirm("¿Eliminar pedido?")) {
+                    try {
+                        await deleteDoc(doc(db, "pedidos", id)); 
+                    } catch (e) { console.error("Error al eliminar: ", e); }
+                }
+            },
 
             startEngine() {
                 this.loadCountryStickers();

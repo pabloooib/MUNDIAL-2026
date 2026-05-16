@@ -32,187 +32,53 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background: var(--bg-dark); 
-            color: #fff; 
-            display: flex; 
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-dark); color: #fff; display: flex; min-height: 100vh; overflow-x: hidden; }
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--wc-cyan); }
 
-        #login-screen { 
-            position: fixed; 
-            inset: 0; 
-            background: radial-gradient(circle at center, #11092c 0%, #000 100%); 
-            z-index: 9999; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-        }
-        .login-card { 
-            background: var(--glass-card); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            padding: 50px 40px; 
-            border-radius: 30px; 
-            text-align: center; 
-            width: 90%; 
-            max-width: 420px; 
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
+        #login-screen { position: fixed; inset: 0; background: radial-gradient(circle at center, #11092c 0%, #000 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: var(--glass-card); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); padding: 50px 40px; border-radius: 30px; text-align: center; width: 90%; max-width: 420px; border: 1px solid var(--glass-border); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
 
-        aside { 
-            width: 280px; 
-            background: #060612; 
-            border-right: 1px solid var(--glass-border); 
-            padding: 40px 20px; 
-            display: none; 
-            flex-direction: column; 
-            position: fixed; 
-            height: 100vh; 
-            z-index: 100;
-        }
-        main { 
-            flex: 1; 
-            margin-left: 280px; 
-            padding: 50px; 
-            display: none; 
-            background: radial-gradient(circle at top right, rgba(74, 20, 140, 0.05), transparent 60%);
-        }
+        aside { width: 280px; background: #060612; border-right: 1px solid var(--glass-border); padding: 40px 20px; display: none; flex-direction: column; position: fixed; height: 100vh; z-index: 100; }
+        main { flex: 1; margin-left: 280px; padding: 50px; display: none; background: radial-gradient(circle at top right, rgba(74, 20, 140, 0.05), transparent 60%); }
 
-        .nav-item { 
-            padding: 14px 18px; 
-            color: #fff; 
-            text-decoration: none; 
-            border-radius: 14px; 
-            margin-bottom: 10px; 
-            display: flex; 
-            align-items: center; 
-            gap: 14px; 
-            font-weight: 500; 
-            cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            opacity: 0.5; 
-        }
+        .nav-item { padding: 14px 18px; color: #fff; text-decoration: none; border-radius: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0.5; }
         .nav-item:hover { background: var(--glass); opacity: 0.9; color: var(--wc-cyan); }
         .nav-item.active { opacity: 1; color: var(--wc-cyan); background: rgba(0, 229, 255, 0.05); border-left: 4px solid var(--wc-cyan); font-weight: 600; }
 
-        .card { 
-            background: rgba(255, 255, 255, 0.02); 
-            backdrop-filter: blur(10px);
-            border-radius: 24px; 
-            padding: 35px; 
-            border: 1px solid var(--glass-border); 
-            margin-bottom: 25px; 
-        }
+        .card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(10px); border-radius: 24px; padding: 35px; border: 1px solid var(--glass-border); margin-bottom: 25px; }
         .view { display: none; }
         .view.active { display: block; animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(15px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        input, select { 
-            width: 100%; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            background: rgba(0,0,0,0.4); 
-            color: #fff; 
-            padding: 14px 18px; 
-            border-radius: 14px; 
-            margin-top: 8px; 
-            font-family: inherit;
-            font-size: 0.95rem;
-            transition: border-color 0.3s;
-        }
+        input, select { width: 100%; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.4); color: #fff; padding: 14px 18px; border-radius: 14px; margin-top: 8px; font-family: inherit; font-size: 0.95rem; transition: border-color 0.3s; }
         input:focus, select:focus { border-color: var(--wc-cyan); outline: none; box-shadow: 0 0 10px rgba(0, 229, 255, 0.1); }
         
-        .btn { 
-            width: 100%; 
-            background: #fff; 
-            color: #000; 
-            border: none; 
-            padding: 16px; 
-            border-radius: 50px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            font-size: 0.95rem; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px; 
-            letter-spacing: 0.5px;
-        }
+        .btn { width: 100%; background: #fff; color: #000; border: none; padding: 16px; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: 0.95rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; gap: 10px; letter-spacing: 0.5px; }
         .btn:hover { background: var(--wc-cyan); box-shadow: 0 8px 25px rgba(0,229,255,0.35); transform: translateY(-2px); }
         .btn:active { transform: translateY(0); }
         .btn-danger { background: none; border: 1px solid var(--danger); color: var(--danger); }
         .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 8px 20px rgba(255, 82, 82, 0.25); }
 
-        .admin-sticker-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); 
-            gap: 18px; 
-            margin-top: 30px; 
-        }
-        .admin-stk-item { 
-            background: rgba(0,0,0,0.3); 
-            border: 1px solid var(--glass-border); 
-            padding: 20px 16px; 
-            border-radius: 18px; 
-            text-align: left; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between;
-            transition: transform 0.3s, border-color 0.3s;
-        }
-        .admin-stk-item:hover {
-            transform: translateY(-4px);
-            border-color: rgba(0, 229, 255, 0.3);
-        }
-        .admin-stk-item b { 
-            font-family: 'Oswald'; 
-            font-size: 1.4rem; 
-            display: block; 
-            margin-bottom: 8px; 
-            text-align: center;
-            color: #fff;
-            letter-spacing: 0.5px;
-        }
-        .admin-stk-item label { 
-            font-size: 0.7rem; 
-            opacity: 0.4; 
-            margin-top: 10px; 
-            text-transform: uppercase; 
-            display: block; 
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
+        .admin-sticker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 18px; margin-top: 30px; }
+        .admin-stk-item { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 20px 16px; border-radius: 18px; text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.3s, border-color 0.3s; }
+        .admin-stk-item:hover { transform: translateY(-4px); border-color: rgba(0, 229, 255, 0.3); }
+        .admin-stk-item b { font-family: 'Oswald'; font-size: 1.4rem; display: block; margin-bottom: 8px; text-align: center; color: #fff; letter-spacing: 0.5px; }
+        .admin-stk-item label { font-size: 0.7rem; opacity: 0.4; margin-top: 10px; text-transform: uppercase; display: block; letter-spacing: 0.5px; font-weight: 600; }
         .admin-stk-item select, .admin-stk-item input { padding: 10px; font-size: 0.85rem; margin-top: 4px; border-radius: 10px; }
         
         .royal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; margin-top: 25px; }
-        .royal-manage-card { 
-            background: rgba(10, 10, 26, 0.4); 
-            border: 1px solid var(--glass-border); 
-            padding: 30px 25px; 
-            border-radius: 24px; 
-            border-top: 4px solid var(--gold); 
-            transition: transform 0.3s;
-        }
+        .royal-manage-card { background: rgba(10, 10, 26, 0.4); border: 1px solid var(--glass-border); padding: 30px 25px; border-radius: 24px; border-top: 4px solid var(--gold); transition: transform 0.3s; }
         .royal-manage-card:hover { transform: translateY(-5px); }
+        .royal-manage-card.campeon-card { border-top-color: var(--wc-cyan); }
 
         .order-card { border-left: 4px solid var(--wc-cyan); background: rgba(255,255,255,0.01); transition: all 0.3s; }
         .order-card:hover { background: rgba(255,255,255,0.03); }
         .order-card.pendiente { border-left-color: var(--gold); }
         .badge { font-size: 0.7rem; padding: 6px 14px; border-radius: 50px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
-        
         .badge.pendiente { background: rgba(255, 215, 0, 0.15); color: var(--gold); }
         .badge.entregado { background: rgba(0, 230, 118, 0.15); color: var(--success); }
     </style>
@@ -233,7 +99,8 @@
             <h2 style="font-family:'Oswald'; color: var(--wc-cyan); letter-spacing:3px; font-size: 1.8rem;">MASTER PANEL</h2>
             <p style="font-size:0.65rem; opacity:0.4; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;">Sincronizado en Tiempo Real</p>
         </div>
-        <div class="nav-item active" onclick="switchView('inventario-view', this)"><i class="fa-solid fa-map"></i> Estampas Colecciones</div>
+        <div class="nav-item active" onclick="switchView('inventario-view', this)"><i class="fa-solid fa-map"></i> Estampas Países</div>
+        <div class="nav-item" onclick="switchView('campeones-view', this)"><i class="fa-solid fa-trophy"></i> Campeones del Mundo</div>
         <div class="nav-item" onclick="switchView('royal-view', this)"><i class="fa-solid fa-crown"></i> Royal Legends</div>
         <div class="nav-item" onclick="switchView('pedidos-view', this)"><i class="fa-solid fa-box-open"></i> Pedidos Recibidos</div>
         
@@ -244,12 +111,13 @@
 
     <main id="main-content">
         
+        <!-- Paises View -->
         <div id="inventario-view" class="view active">
             <h2 style="font-family:'Oswald'; font-size:2.5rem; margin-bottom:5px; letter-spacing: 1px;">VALORES DEL ÁLBUM</h2>
-            <p style="opacity:0.5; font-size:0.9rem; margin-bottom:35px;">Modifica de forma personalizada los precios y disponibilidad de las estampas de cada país o sección especial.</p>
+            <p style="opacity:0.5; font-size:0.9rem; margin-bottom:35px;">Modifica de forma personalizada los precios y disponibilidad de las estampas de cada país.</p>
             <div class="card">
                 <div style="max-width: 400px; margin-bottom: 10px;">
-                    <label style="font-size: 0.75rem; opacity: 0.5; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Seleccionar Colección o País</label>
+                    <label style="font-size: 0.75rem; opacity: 0.5; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Seleccionar País</label>
                     <select id="admin-country-selector" onchange="adminApp.loadCountryStickers()"></select>
                 </div>
                 <div class="admin-sticker-grid" id="admin-grid-container"></div>
@@ -257,16 +125,23 @@
             </div>
         </div>
 
+        <!-- Campeones View -->
+        <div id="campeones-view" class="view">
+            <h2 style="font-family:'Oswald'; font-size:2.5rem; margin-bottom:5px; color:var(--wc-cyan); letter-spacing: 1px;">CAMPEONES DEL MUNDO (FWC)</h2>
+            <p style="opacity:0.5; font-size:0.9rem; margin-bottom:35px;">Controla los precios y existencias de la colección exclusiva de campeones (FWC9 al FWC19).</p>
+            <div class="royal-grid" id="campeones-cards-container">Cargando colección histórica...</div>
+            <button class="btn" style="margin-top:40px; max-width:320px; background: var(--wc-cyan); color: #000;" onclick="adminApp.saveCampeonesLegends()"><i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Bloque Campeones</button>
+        </div>
+
+        <!-- Royal Legends View -->
         <div id="royal-view" class="view">
             <h2 style="font-family:'Oswald'; font-size:2.5rem; margin-bottom:5px; color:var(--gold); letter-spacing: 1px;">ROYAL LEGENDS CONTROL</h2>
             <p style="opacity:0.5; font-size:0.9rem; margin-bottom:35px;">Modifica precios y cambia el estado de stock al instante para las cartas estáticas del usuario.</p>
-            
-            <div class="royal-grid" id="royal-cards-container">
-                Cargando altar de leyendas...
-            </div>
+            <div class="royal-grid" id="royal-cards-container">Cargando altar de leyendas...</div>
             <button class="btn" style="margin-top:40px; max-width:320px; background: var(--gold); color: #000;" onclick="adminApp.saveRoyalLegends()"><i class="fa-solid fa-cloud-arrow-up"></i> Actualizar Vitrina Royal</button>
         </div>
 
+        <!-- Pedidos View -->
         <div id="pedidos-view" class="view">
             <h2 style="font-family:'Oswald'; font-size:2.5rem; margin-bottom:5px; letter-spacing: 1px;">HISTORIAL DE PEDIDOS</h2>
             <p style="opacity:0.5; font-size:0.9rem; margin-bottom:35px;">Revisa y gestiona las solicitudes de compra recibidas en el sistema de manera inmediata.</p>
@@ -303,19 +178,11 @@
             {id: "I", paises: ["Francia", "Senegal", "Noruega", "Irak"]},
             {id: "J", paises: ["Argentina", "Austria", "Argelia", "Jordania"]},
             {id: "K", paises: ["Portugal", "Colombia", "Uzbekistán", "Jamaica"]},
-            {id: "L", paises: ["Inglaterra", "Croacia", "Ghana", "Panamá"]},
-            {id: "CAMPEONES DEL MUNDO", paises: ["fwc 9", "fwc 10", "fwc 11", "fwc 12", "fwc 13", "fwc 14", "fwc 15", "fwc 16", "fwc 17", "fwc 18", "fwc 19"]}
+            {id: "L", paises: ["Inglaterra", "Croacia", "Ghana", "Panamá"]}
         ];
 
         const opcionesSelector = [];
-        listadoGrupos.forEach(g => {
-            if(g.id === "CAMPEONES DEL MUNDO") {
-                opcionesSelector.push("CAMPEONES DEL MUNDO");
-            } else {
-                opcionesSelector.push(...g.paises);
-            }
-        });
-
+        listadoGrupos.forEach(g => opcionesSelector.push(...g.paises));
         document.getElementById('admin-country-selector').innerHTML = opcionesSelector.map(p => `<option value="${p}">${p.toUpperCase()}</option>`).join('');
 
         window.checkPin = function() {
@@ -342,74 +209,36 @@
                 try {
                     const docSnap = await getDoc(doc(db, "precios_estampas", seleccion));
                     let preciosGuardados = docSnap.exists() ? docSnap.data() : {};
-
                     let htmlCards = "";
 
-                    if(seleccion === "CAMPEONES DEL MUNDO") {
-                        const grupoCampeones = listadoGrupos.find(g => g.id === "CAMPEONES DEL MUNDO");
-                        grupoCampeones.paises.forEach(codigo => {
-                            // Sanitizar clave buscando tanto con espacio como con guión bajo para compatibilidad
-                            let claveSanitizada = codigo.replace(" ", "_");
-                            let precioDefecto = 15; 
-                            let precioFinal = precioDefecto;
-                            let disponibleFinal = true;
+                    for(let i = 1; i <= 20; i++) {
+                        let precioDefecto = (i === 1) ? 10 : (i === 13 ? 15 : 2);
+                        if(seleccion === "Portugal" && i === 15) precioDefecto = 40;
+                        
+                        let precioFinal = precioDefecto;
+                        let disponibleFinal = true;
 
-                            let datosCromo = preciosGuardados[claveSanitizada] || preciosGuardados[codigo];
-
-                            if (datosCromo !== undefined) {
-                                if (typeof datosCromo === 'object' && datosCromo !== null) {
-                                    precioFinal = datosCromo.precio ?? precioDefecto;
-                                    disponibleFinal = datosCromo.disponible ?? true;
-                                } else {
-                                    precioFinal = datosCromo;
-                                }
+                        if (preciosGuardados.hasOwnProperty(i)) {
+                            if (typeof preciosGuardados[i] === 'object' && preciosGuardados[i] !== null) {
+                                precioFinal = preciosGuardados[i].precio ?? preciosGuardados[i].price ?? precioDefecto;
+                                disponibleFinal = preciosGuardados[i].disponible ?? true;
+                            } else {
+                                precioFinal = preciosGuardados[i];
                             }
-
-                            htmlCards += `
-                                <div class="admin-stk-item" data-num="${claveSanitizada}">
-                                    <b>${codigo.toUpperCase()}</b>
-                                    <label>Precio (Q)</label>
-                                    <input type="number" class="stk-price-input" value="${precioFinal}">
-                                    
-                                    <label>Estado</label>
-                                    <select class="stk-status-select">
-                                        <option value="true" ${disponibleFinal ? 'selected' : ''}>DISPONIBLE</option>
-                                        <option value="false" ${!disponibleFinal ? 'selected' : ''}>AGOTADO</option>
-                                    </select>
-                                </div>
-                            `;
-                        });
-                    } else {
-                        for(let i = 1; i <= 20; i++) {
-                            let precioDefecto = (i === 1) ? 10 : (i === 13 ? 15 : 2);
-                            if(seleccion === "Portugal" && i === 15) precioDefecto = 40;
-                            
-                            let precioFinal = precioDefecto;
-                            let disponibleFinal = true;
-
-                            if (preciosGuardados.hasOwnProperty(i)) {
-                                if (typeof preciosGuardados[i] === 'object' && preciosGuardados[i] !== null) {
-                                    precioFinal = preciosGuardados[i].precio ?? precioDefecto;
-                                    disponibleFinal = preciosGuardados[i].disponible ?? true;
-                                } else {
-                                    precioFinal = preciosGuardados[i];
-                                }
-                            }
-
-                            htmlCards += `
-                                <div class="admin-stk-item" data-num="${i}">
-                                    #${i}</b>
-                                    <label>Precio (Q)</label>
-                                    <input type="number" class="stk-price-input" value="${precioFinal}">
-                                    
-                                    <label>Estado</label>
-                                    <select class="stk-status-select">
-                                        <option value="true" ${disponibleFinal ? 'selected' : ''}>DISPONIBLE</option>
-                                        <option value="false" ${!disponibleFinal ? 'selected' : ''}>AGOTADO</option>
-                                    </select>
-                                </div>
-                            `;
                         }
+
+                        htmlCards += `
+                            <div class="admin-stk-item" data-num="${i}">
+                                <b>#${i}</b>
+                                <label>Precio (Q)</label>
+                                <input type="number" class="stk-price-input" value="${precioFinal}">
+                                <label>Estado</label>
+                                <select class="stk-status-select">
+                                    <option value="true" ${disponibleFinal ? 'selected' : ''}>DISPONIBLE</option>
+                                    <option value="false" ${!disponibleFinal ? 'selected' : ''}>AGOTADO</option>
+                                </select>
+                            </div>
+                        `;
                     }
                     gridContainer.innerHTML = htmlCards;
                 } catch (e) { console.error(e); }
@@ -424,41 +253,75 @@
                     const precio = parseFloat(item.querySelector('.stk-price-input').value) || 0;
                     const disponible = item.querySelector('.stk-status-select').value === "true";
                     
-                    nuevosDatos[clave] = {
-                        precio: precio,
-                        disponible: disponible
-                    };
+                    nuevosDatos[clave] = { precio: precio, disponible: disponible };
                 });
 
                 try {
                     await setDoc(doc(db, "precios_estampas", seleccion), nuevosDatos);
-                    alert("¡Precios y disponibilidad actualizados de manera exitosa!");
+                    alert("¡Precios de país guardados!");
                 } catch (e) { alert(e.message); }
+            },
+
+            listenCampeones() {
+                onSnapshot(doc(db, "config", "campeones_config"), (snap) => {
+                    const container = document.getElementById('campeones-cards-container');
+                    const baseDefecto = {};
+                    for(let i = 9; i <= 19; i++) {
+                        baseDefecto[`fwc${i}`] = { name: `CAMPEÓN FWC ${i}`, itemCartName: `Campeones #fwc${i}`, price: 15, disponible: true };
+                    }
+                    const dataActual = snap.exists() ? snap.data() : baseDefecto;
+
+                    container.innerHTML = Object.entries(dataActual).map(([idKey, info]) => `
+                        <div class="royal-manage-card campeon-card" data-id="${idKey}" data-cartname="${info.itemCartName}" data-name="${info.name}">
+                            <h3 style="font-family:'Oswald'; color:var(--wc-cyan); margin-bottom:15px; font-size: 1.4rem; letter-spacing: 0.5px;">${idKey.toUpperCase()}</h3>
+                            <label style="font-size:0.75rem; opacity:0.5; font-weight:600; text-transform:uppercase;">Precio (Q)</label>
+                            <input type="number" class="campeon-price" value="${info.price}" style="margin-bottom:15px;">
+                            <label style="font-size:0.75rem; opacity:0.5; font-weight:600; text-transform:uppercase;">Estado en Tienda</label>
+                            <select class="campeon-status">
+                                <option value="true" ${info.disponible ? 'selected' : ''}>DISPONIBLE</option>
+                                <option value="false" ${!info.disponible ? 'selected' : ''}>AGOTADO</option>
+                            </select>
+                        </div>
+                    `).join('');
+                });
+            },
+
+            async saveCampeonesLegends() {
+                try {
+                    const dataAGuardar = {};
+                    document.querySelectorAll('.campeon-card').forEach(card => {
+                        const idKey = card.dataset.id;
+                        dataAGuardar[idKey] = {
+                            name: card.dataset.name,
+                            itemCartName: card.dataset.cartname,
+                            price: parseFloat(card.querySelector('.campeon-price').value) || 0,
+                            disponible: card.querySelector('.campeon-status').value === "true"
+                        };
+                    });
+                    await setDoc(doc(db, "config", "campeones_config"), dataAGuardar);
+                    alert("¡Bloque de Campeones Actualizado en Firestore!");
+                } catch (e) { alert("Error: " + e.message); }
             },
 
             listenRoyalLegends() {
                 onSnapshot(doc(db, "config", "royal_legends"), (snap) => {
                     const container = document.getElementById('royal-cards-container');
-                    
                     const dataDefecto = {
-                        "special-messi": { name: "LIONEL MESSI", itemCartName: "MESSI LEYENDA", price: 40, disponible: false },
+                        "special-messi": { name: "LIONEL MESSI", itemCartName: "MESSI LEYENDA", price: 40, disponible: true },
                         "special-cr7": { name: "C. RONALDO", itemCartName: "CR7 LEYENDA", price: 40, disponible: true },
-                        "special-panini": { name: "PANINI GOLD", itemCartName: "CARTA PANINI", price: 50, disponible: false }
+                        "special-panini": { name: "PANINI GOLD", itemCartName: "CARTA PANINI", price: 50, disponible: true }
                     };
-
                     const dataActual = snap.exists() ? snap.data() : dataDefecto;
 
                     container.innerHTML = Object.entries(dataActual).map(([idKey, info]) => `
                         <div class="royal-manage-card" data-id="${idKey}" data-cartname="${info.itemCartName}" data-name="${info.name}">
                             <h3 style="font-family:'Oswald'; color:var(--gold); margin-bottom:15px; font-size: 1.4rem; letter-spacing: 0.5px;">${info.name}</h3>
-                            
                             <label style="font-size:0.75rem; opacity:0.5; font-weight:600; text-transform:uppercase;">Precio (Q)</label>
                             <input type="number" class="royal-price" value="${info.price}" style="margin-bottom:15px;">
-                            
                             <label style="font-size:0.75rem; opacity:0.5; font-weight:600; text-transform:uppercase;">Estado en Tienda</label>
                             <select class="royal-status">
-                                <option value="true" ${info.disponible ? 'selected' : ''}>DISPONIBLE (AGREGAR)</option>
-                                <option value="false" ${!info.disponible ? 'selected' : ''}>AGOTADO POR EL MOMENTO</option>
+                                <option value="true" ${info.disponible ? 'selected' : ''}>DISPONIBLE</option>
+                                <option value="false" ${!info.disponible ? 'selected' : ''}>AGOTADO</option>
                             </select>
                         </div>
                     `).join('');
@@ -468,7 +331,7 @@
             async saveRoyalLegends() {
                 try {
                     const dataAGuardar = {};
-                    document.querySelectorAll('.royal-manage-card').forEach(card => {
+                    document.querySelectorAll('.royal-manage-card:not(.campeon-card)').forEach(card => {
                         const idKey = card.dataset.id;
                         dataAGuardar[idKey] = {
                             name: card.dataset.name,
@@ -478,14 +341,14 @@
                         };
                     });
                     await setDoc(doc(db, "config", "royal_legends"), dataAGuardar);
-                    alert("¡Sección Royal Legends actualizada en la base de datos!");
+                    alert("¡Sección Royal Legends actualizada!");
                 } catch (e) { alert("Error al guardar: " + e.message); }
             },
 
             listenOrders() {
                 onSnapshot(collection(db, "pedidos"), (snap) => {
                     const box = document.getElementById('container-pedidos-list');
-                    if(snap.empty) { box.innerHTML = `<p style="opacity:0.4; font-size:0.9rem;">Sin pedidos activos en el sistema...</p>`; return; }
+                    if(snap.empty) { box.innerHTML = `<p style="opacity:0.4; font-size:0.9rem;">Sin pedidos activos...</p>`; return; }
                     box.innerHTML = snap.docs.map(docSnap => {
                         const p = docSnap.data();
                         const isPen = p.status === 'pendiente';
@@ -509,21 +372,15 @@
             },
 
             async updateOrderStatus(id, nuevoEstado) { 
-                try {
-                    await updateDoc(doc(db, "pedidos", id), { status: nuevoEstado }); 
-                } catch (e) { console.error("Error al actualizar: ", e); }
+                try { await updateDoc(doc(db, "pedidos", id), { status: nuevoEstado }); } catch (e) { console.error(e); }
             },
-            
             async deleteOrder(id) { 
-                if(confirm("¿Estás seguro de que deseas eliminar permanentemente este pedido?")) {
-                    try {
-                        await deleteDoc(doc(db, "pedidos", id)); 
-                    } catch (e) { console.error("Error al eliminar: ", e); }
-                }
+                if(confirm("¿Eliminar pedido?")) { try { await deleteDoc(doc(db, "pedidos", id)); } catch (e) { console.error(e); } }
             },
 
             startEngine() {
                 this.loadCountryStickers();
+                this.listenCampeones();
                 this.listenRoyalLegends();
                 this.listenOrders();
             }

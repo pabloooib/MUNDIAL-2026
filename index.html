@@ -171,7 +171,17 @@
         const todosLosPaises = [];
         listadoGrupos.forEach(g => todosLosPaises.push(...g.paises));
 
-        document.getElementById('admin-country-selector').innerHTML = todosLosPaises.map(p => `<option value="${p}">${p.toUpperCase()}</option>`).join('');
+        // Para el selector de Admin nos interesa listar los Países normales + la sección especial exacta
+        const opcionesSelector = [];
+        listadoGrupos.forEach(g => {
+            if(g.id === "CAMPEONES DEL MUNDO") {
+                opcionesSelector.push("CAMPEONES DEL MUNDO");
+            } else {
+                opcionesSelector.push(...g.paises);
+            }
+        });
+
+        document.getElementById('admin-country-selector').innerHTML = opcionesSelector.map(p => `<option value="${p}">${p.toUpperCase()}</option>`).join('');
 
         window.checkPin = function() {
             const pin = document.getElementById('admin-pin').value;
@@ -201,11 +211,11 @@
 
                     let htmlCards = "";
 
-                    // Si es la sección especial de Campeones del mundo, iteramos sobre sus códigos fwc
-                    if(seleccion.startsWith("fwc")) {
+                    // Verificamos si la selección actual es la sección especial de Campeones del mundo
+                    if(seleccion === "CAMPEONES DEL MUNDO") {
                         const grupoCampeones = listadoGrupos.find(g => g.id === "CAMPEONES DEL MUNDO");
                         grupoCampeones.paises.forEach(codigo => {
-                            let precioDefecto = 15; // Precio base estándar para cromos especiales fwc
+                            let precioDefecto = 15; 
                             let precioFinal = precioDefecto;
                             let disponibleFinal = true;
 
@@ -233,7 +243,7 @@
                             `;
                         });
                     } else {
-                        // Comportamiento normal para los 12 grupos de países (1 al 20)
+                        // Comportamiento normal para los países individuales (cromos del 1 al 20)
                         for(let i = 1; i <= 20; i++) {
                             let precioDefecto = (i === 1) ? 10 : (i === 13 ? 15 : 2);
                             if(seleccion === "Portugal" && i === 15) precioDefecto = 40;
@@ -274,7 +284,7 @@
                 const nuevosDatos = {};
                 
                 document.querySelectorAll('.admin-stk-item').forEach(item => {
-                    const clave = item.dataset.num; // Puede ser el número (1-20) o el código string (fwc X)
+                    const clave = item.dataset.num; // Será el entero (1-20) o el string (fwc X)
                     const precio = parseFloat(item.querySelector('.stk-price-input').value) || 0;
                     const disponible = item.querySelector('.stk-status-select').value === "true";
                     
